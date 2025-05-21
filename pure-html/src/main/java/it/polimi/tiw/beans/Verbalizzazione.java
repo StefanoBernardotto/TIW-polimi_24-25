@@ -8,7 +8,7 @@ public class Verbalizzazione {
 	public String getCodiceVerbale() {
 		return codiceVerbale.toString();
 	}
-	public void setCodiceVerbale(UUID codiceVerbale) {
+	public void setCodiceVerbaleString(UUID codiceVerbale) {
 		this.codiceVerbale = codiceVerbale;
 	}
 	public int getMatricolaStudente() {
@@ -20,5 +20,10 @@ public class Verbalizzazione {
 		else
 			throw new RuntimeException("Matricola non valida: " + matricolaStudente);
 	}
+	public Verbalizzazione(UUID codiceVerbale, int matricolaStudente) {
+		this.codiceVerbale = codiceVerbale;
+		setMatricolaStudente(matricolaStudente);
+	}
+	
 	
 }
