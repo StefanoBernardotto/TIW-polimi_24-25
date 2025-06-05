@@ -1,33 +1,47 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta charset="UTF-8">
 <title>Home - Studente</title>
 </head>
 <body>
 	<div id="top-bar">
-        <a href="logout.html">Logout</a>
-    </div><br>
-    <div id="content">
-        <h3>I tuoi corsi</h3>
-        <table>
-            <tr>
-                <th>Nome corso</th>
-            </tr>
-            <tr>
-                <th><a href="Appelli_studente.html">Corso 1</a><th></th>
-            </tr>
-            <tr>
-                <th><a href="Appelli_studente.html">Corso 2</a><th></th>
-            </tr>
-            <tr>
-                <th><a href="Appelli_studente.html">Corso 3</a><th></th>
-            </tr>
-            <tr>
-                <th><a href="Appelli_studente.html">Corso 4</a><th></th>
-            </tr>
-            
-        </table>
-    </div>
+		<a th:href="@{/Logout}">Logout</a>
+	</div>
+	<br>
+	<div id="ko-content" th:if="${messaggioListaVuota} != null" th:text="${messaggioListaVuota}">Lista vuota</div>
+	<div id="ok-content" th:unless="${messaggioListaVuota} != null">
+		<h3>I tuoi corsi</h3>
+		<table>
+			<thead>
+				<tr>
+					<th>Nome corso</th>
+					<th>Docente</th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody th:remove="all-but-first">
+				<tr th:each="corso : ${listaCorsi}">
+					<td th:text="${corso.getNome()}">Corso 1</td>
+					<td th:text="${corso.getNomeCognomeDocente()}">Docente</td>
+					<td>
+						<a th:href="@{/AppelliStudente(nomeCorso=${corso.getNome()})}">Appelli</a>
+					</td>
+				</tr>
+				<tr>
+					<td><a href="Appelli_studente.html">Corso 1</a></td>
+					<td>Docente</td>
+				</tr>
+				<tr>
+					<td><a href="Appelli_studente.html">Corso 1</a></td>
+					<td>Docente</td>
+				</tr>
+				<tr>
+					<td><a href="Appelli_studente.html">Corso 1</a></td>
+					<td>Docente</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
 </body>
 </html>
