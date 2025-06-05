@@ -3,6 +3,13 @@ package it.polimi.tiw.beans;
 public class Corso {
 	private String nome;
 	private int codiceDocente;
+	private String nomeCognomeDocente;
+	public String getNomeCognomeDocente() {
+		return nomeCognomeDocente;
+	}
+	public void setNomeCognomeDocente(String nomeCognomeDocente) {
+		this.nomeCognomeDocente = nomeCognomeDocente;
+	}
 	public String getNome() {
 		return nome;
 	}
@@ -18,8 +25,9 @@ public class Corso {
 		else
 			throw new RuntimeException("Codice docente non valido: " + codiceDocente);
 	}
-	public Corso(String nome, int codiceDocente) {
+	public Corso(String nome, int codiceDocente, String nomeCognomeDocente) {
 		this.nome = nome;
 		this.setCodiceDocente(codiceDocente);
+		this.nomeCognomeDocente = nomeCognomeDocente;
 	}
 }
