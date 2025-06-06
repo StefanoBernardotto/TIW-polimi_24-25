@@ -19,7 +19,9 @@ import org.thymeleaf.web.IWebExchange;
 import org.thymeleaf.web.servlet.JakartaServletWebApplication;
 
 import it.polimi.tiw.beans.Iscrizione;
+import it.polimi.tiw.beans.Studente;
 import it.polimi.tiw.daos.IscrizioneDAO;
+import it.polimi.tiw.daos.StudenteDAO;
 import it.polimi.tiw.misc.DatabaseInit;
 import it.polimi.tiw.misc.ThymeleafInit;
 
@@ -57,23 +59,41 @@ public class Esito extends HttpServlet {
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Formato errato");
 			return;
 		}
-		
+
 		IscrizioneDAO iscrizioneDAO = new IscrizioneDAO(connection);
-			try {
-				Iscrizione iscrizione = iscrizioneDAO.getEsitoEsame(matricolaStudente, data, nomeCorso);
-				if(iscrizione == null) {
-					context.setVariable("messaggioNoEsito", "Non iscritto a questo appello");
-				}else if(!iscrizione.isPubblicato()) {
-					context.setVariable("messaggioNoEsito", "Esito non ancora pubblicato");
-				}else {
-					context.setVariable("iscrizione", iscrizione);
-					context.setVariable("rifiutato", iscrizione.isRifiutato());
+		try {
+			Iscrizione iscrizione = iscrizioneDAO.getEsitoEsame(matricolaStudente, data, nomeCorso);
+			if (iscrizione == null) {
+				context.setVariable("messaggioNoEsito", "Non iscritto a questo appello");
+			} else if (!iscrizione.isPubblicato()) {
+				context.setVariable("messaggioNoEsito", "Esito non ancora pubblicato");
+			} else {
+				StudenteDAO studenteDAO = new StudenteDAO(connection);
+				Studente s = studenteDAO.getStudenteByMatricola(iscrizione.getMatricolaStudente());
+				if (s == null) {
+					response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Studente non trovato");
+					return;
+				} else {
+					context.setVariable("studente", s);
 				}
-				templateEngine.process("studente/esito", context, response.getWriter());
-			} catch (SQLException e) {
-				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Errone nella connessione al database");
-				return;
+				context.setVariable("iscrizione", iscrizione);
+				context.setVariable("rifiutato", iscrizione.isRifiutato());
 			}
-		
+			templateEngine.process("studente/esito", context, response.getWriter());
+		} catch (SQLException e) {
+			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Errone nella connessione al database");
+			return;
+		}
+	}
+
+	@Override
+	public void destroy() {
+		try {
+			if (!connection.isClosed()) {
+				connection.close();
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 }

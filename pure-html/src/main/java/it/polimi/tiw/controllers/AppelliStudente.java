@@ -76,9 +76,12 @@ public class AppelliStudente extends HttpServlet {
 	@Override
 	public void destroy() {
 		try {
-			if(!connection.isClosed())
+			if(!connection.isClosed()) {
 				connection.close();
-		} catch (SQLException e) {}
+			}
+		}catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 
 }

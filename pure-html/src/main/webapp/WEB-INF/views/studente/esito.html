@@ -1,27 +1,30 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta charset="UTF-8">
 <title>Esito esame</title>
 </head>
 <body>
-    <div id="top-bar">
-        <a href="HomeDocente.html">Indietro</a>
-        <a href="../logout.html">Logout</a>
-    </div><br>
-    <div id="content">
-        <h3>Esito pubblicato / Esito non pubblicato / Non iscritto</h3>
-        <form>
-            <label>Nome studente: Mario Rossi</label><br>
-            <label>Matricola: 123456</label><br>
-            <label>Email: mario.rossi@example.com</label><br>
-            <label>Corso di laurea: Ingegneria Informatica</label><br>
-            <label>Corso: Programmazione Web</label><br>
-            <label>Data appello: 2023-10-01</label><br>
-            <label>Voto: 30</label><br>
-            <label>Stato di valutazione: Pubblicato/Verbalizzato</label><br>
-        </form>
-        <button type="button">Rifiuta</button> 
-    </div>
+	<div id="top-bar">
+		<a th:href="@{/AppelliStudente}">Indietro</a> <a th:href="@{/Logout}">Logout</a>
+	</div>
+	<br>
+	<div id="content">
+		<h4 th:if="${messaggioNoEsito} != null" th:text="${messaggioNoEsito}">Esito non pubblicato</h4>
+		<div th:unless="${messaggioNoEsito} != null">
+			<form>
+				<label th:text="'Nome: ' + ${studente.getNome()} + ' ' + ${studente.getCognome()}">Nome studente: Mario Rossi</label><br> 
+				<label th:text="'Matricola: ' + ${iscrizione.getMatricolaStudente()}">Matricola: 123456</label><br> 
+				<label th:text="'Email: ' + ${studente.getEmail()}">Email: mario.rossi@example.com</label><br> 
+				<label th:text="'Corso di laurea: ' + ${studente.getCorsoLaurea()}">Corso di laurea: Ingegneria Informatica</label><br>
+				<label th:text="'Corso: ' + ${iscrizione.getNomeCorso()}">Corso: Programmazione Web</label><br>
+				<label th:text="'Data appello: ' + ${iscrizione.getDataAppello().toString()}">Data appello: 2023-10-01</label><br>
+				<label th:text="'Voto: ' + ${iscrizione.getVoto()}">Voto: 30</label><br>
+				<label th:text="'Stato di pubblicazione: ' + ${iscrizione.getStatoPubblicazione()}">Stato di pubblicazione: Pubblicato/Verbalizzato</label><br>
+			</form>
+			<button th:if="!${rifiutato}" type="button">Rifiuta</button>
+			<h4 th:if="${rifiutato}" th:text="'Il voto è stato rifiutato'">Voto rifiutato</h4>
+		</div>
+	</div>
 </body>
 </html>

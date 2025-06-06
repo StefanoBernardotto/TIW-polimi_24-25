@@ -87,5 +87,16 @@ public class LoginStudente extends HttpServlet {
 			return;
 		}
 	}
+	
+	@Override
+	public void destroy() {
+		try {
+			if(!connection.isClosed()) {
+				connection.close();
+			}
+		}catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
 
 }

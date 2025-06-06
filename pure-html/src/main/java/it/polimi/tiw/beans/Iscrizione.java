@@ -83,7 +83,7 @@ public class Iscrizione {
 	}
 	
 	public boolean isPubblicato() {
-		return this.statoPubblicazione.equals("pubblicato") || this.statoPubblicazione.equals("verbalizzato");
+		return this.statoPubblicazione.equals("pubblicato") || this.statoPubblicazione.equals("verbalizzato") || this.statoPubblicazione.equals("rifiutato");
 	}
 	
 	public boolean isRifiutato() {

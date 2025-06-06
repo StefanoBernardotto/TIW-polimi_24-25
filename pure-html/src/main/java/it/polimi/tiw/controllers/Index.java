@@ -31,7 +31,6 @@ public class Index extends HttpServlet {
 
 	@Override
 	public void init() throws UnavailableException {
-		connection = DatabaseInit.initDB(getServletContext());
 		templateEngine = ThymeleafInit.initialize(getServletContext());
 	}
 
@@ -44,6 +43,11 @@ public class Index extends HttpServlet {
 		WebContext context = new WebContext(webExchange);
 
 		templateEngine.process("index", context, response.getWriter());
+	}
+	
+	@Override
+	public void destroy() {
+		
 	}
 
 }

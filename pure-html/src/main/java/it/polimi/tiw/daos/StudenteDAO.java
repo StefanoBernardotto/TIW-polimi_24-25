@@ -29,7 +29,28 @@ public class StudenteDAO {
 							res.getString("nome"),
 							res.getString("cognome"),
 							res.getString("email"),
-							res.getString("password"),
+							"",
+							res.getString("corso_laurea"));
+				}
+			}
+		}
+	}
+	
+	public Studente getStudenteByMatricola(int mat) throws SQLException{
+		String queryString = "select * from Studenti where matricola = ?";
+		try(PreparedStatement ps = connection.prepareStatement(queryString)) {
+			ps.setInt(1, mat);
+			try(ResultSet res = ps.executeQuery()){
+				if(!res.isBeforeFirst()) {
+					return null;  // credenziali non valide, login fallito
+				}else {
+					res.next();  // credenziali valide, restituisce lo studente
+					return new Studente(
+							res.getInt("matricola"),
+							res.getString("nome"),
+							res.getString("cognome"),
+							res.getString("email"),
+							"",
 							res.getString("corso_laurea"));
 				}
 			}

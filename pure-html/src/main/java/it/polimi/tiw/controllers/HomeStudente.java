@@ -63,5 +63,16 @@ public class HomeStudente extends HttpServlet {
 			response.sendRedirect(request.getContextPath() + "/LoginStudente");
 		}
 	}
+	
+	@Override
+	public void destroy() {
+		try {
+			if(!connection.isClosed()) {
+				connection.close();
+			}
+		}catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
 
 }
