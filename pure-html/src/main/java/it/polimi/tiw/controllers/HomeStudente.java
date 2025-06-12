@@ -45,11 +45,11 @@ public class HomeStudente extends HttpServlet {
 		WebContext context = new WebContext(webExchange);
 
 		HttpSession session = request.getSession();
-		Integer matricolaStudente = (Integer) session.getAttribute("matricola_studente");
-		if (!session.isNew() && matricolaStudente != null) {
+		Integer matricola = (Integer) session.getAttribute("matricola_studente");
+		if (!session.isNew() && matricola != null) {
 			CorsoDAO corsoDAO = new CorsoDAO(connection);
 			try {
-				List<Corso> listaCorsi = corsoDAO.getCorsiByStudente(matricolaStudente);
+				List<Corso> listaCorsi = corsoDAO.getCorsiByStudente(matricola);
 				if(!listaCorsi.isEmpty()) {
 					context.setVariable("listaCorsi", listaCorsi);
 				} else {

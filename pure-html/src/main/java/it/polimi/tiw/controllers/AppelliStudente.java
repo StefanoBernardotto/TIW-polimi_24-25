@@ -45,8 +45,8 @@ public class AppelliStudente extends HttpServlet {
 		WebContext context = new WebContext(webExchange);
 
 		HttpSession session = request.getSession();
-		Integer matricolaStudente = (Integer) session.getAttribute("matricola_studente");
-		if (session.isNew() || matricolaStudente == null) {
+		Integer matricola = (Integer) session.getAttribute("matricola_studente");
+		if (session.isNew() || matricola == null) {
 			response.sendRedirect(request.getContextPath() + "/LoginStudente");
 			return;
 		}

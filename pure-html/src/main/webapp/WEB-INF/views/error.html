@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Error</title>
+</head>
+<body>
+<h3 th:text="'Status code ' + ${status}">501</h3>
+<h5 th:text="${message}">Errore nel server</h5>
+<a th:href="@{/}" th:text="'Torna al login'"></a>
+
+</body>
+</html>

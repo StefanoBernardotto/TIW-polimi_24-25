@@ -59,6 +59,10 @@ public class Esito extends HttpServlet {
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Formato errato");
 			return;
 		}
+		if(nomeCorso == null || data == null) {
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Parametri mancanti");
+			return;
+		}
 
 		IscrizioneDAO iscrizioneDAO = new IscrizioneDAO(connection);
 		try {
