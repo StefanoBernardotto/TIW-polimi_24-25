@@ -13,6 +13,7 @@ import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
 
+import org.apache.tomcat.util.openssl.openssl_h;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
 import org.thymeleaf.web.IWebExchange;
@@ -52,11 +53,13 @@ public class Esito extends HttpServlet {
 		}
 
 		String nomeCorso = request.getParameter("nome_corso");
+		context.setVariable("nome_corso", nomeCorso);
 		Date data;
 		try {
 			data = Date.valueOf(request.getParameter("data"));
 		} catch (IllegalArgumentException e) {
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Formato errato");
+			System.out.println(e.getStackTrace().toString());
 			return;
 		}
 		if(nomeCorso == null || data == null) {
@@ -82,10 +85,51 @@ public class Esito extends HttpServlet {
 				}
 				context.setVariable("iscrizione", iscrizione);
 				context.setVariable("rifiutato", iscrizione.isRifiutato());
+				context.setVariable("verbalizzato", iscrizione.isVerbalizzato());
 			}
 			templateEngine.process("studente/esito", context, response.getWriter());
 		} catch (SQLException e) {
 			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Errone nella connessione al database");
+			return;
+		}
+	}
+	
+	@Override
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+		System.out.println("TEST1");
+		HttpSession session = request.getSession();
+		Integer matricolaStudente = (Integer) session.getAttribute("matricola_studente");
+		if (session.isNew() || matricolaStudente == null) {
+			response.sendRedirect(request.getContextPath() + "/LoginStudente");
+			return;
+		}
+		System.out.println("TEST2");
+		String check = request.getParameter("rifiuta_voto");
+		String nomeCorso = request.getParameter("nomeCorso");
+		Date dataAppello;
+		try {
+			dataAppello = Date.valueOf(request.getParameter("dataAppello"));
+		}catch(IllegalArgumentException e) {
+			System.out.println("Errore conversione data: " + request.getParameter("dataAppello"));
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Formato errato");
+			return;
+		}
+		System.out.println("TEST3");
+		if(check.equals("rifiuta_voto") && matricolaStudente < 999999 && matricolaStudente > 100000 && nomeCorso != null && dataAppello != null) {
+			IscrizioneDAO iscrizioneDAO = new IscrizioneDAO(connection);
+			try {
+				System.out.println("TEST4");
+				iscrizioneDAO.rifiutaEsito(matricolaStudente, dataAppello, nomeCorso);
+				System.out.println("TEST5");
+				response.sendRedirect(getServletContext().getContextPath() +  "/Esito?nome_corso=" + nomeCorso + "&data=" + dataAppello.toString());
+				System.out.println("TEST6");
+				return;
+			} catch (SQLException e) {
+				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Errone nella connessione al database");
+				return;
+			}
+		}else {
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Parametri mancanti");
 			return;
 		}
 	}

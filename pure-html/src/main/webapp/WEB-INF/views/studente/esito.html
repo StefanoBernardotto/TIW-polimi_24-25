@@ -6,7 +6,8 @@
 </head>
 <body>
 	<div id="top-bar">
-		<a th:href="@{/AppelliStudente}">Indietro</a> <a th:href="@{/Logout}">Logout</a>
+		<a th:href="@{/AppelliStudente(nomeCorso=${nome_corso})}">Indietro</a>
+		<a th:href="@{/Logout}">Logout</a>
 	</div>
 	<br>
 	<div id="content">
@@ -22,8 +23,16 @@
 				<label th:text="'Voto: ' + ${iscrizione.getVoto()}">Voto: 30</label><br>
 				<label th:text="'Stato di pubblicazione: ' + ${iscrizione.getStatoPubblicazione()}">Stato di pubblicazione: Pubblicato/Verbalizzato</label><br>
 			</form>
-			<button th:if="!${rifiutato}" type="button">Rifiuta</button>
-			<h4 th:if="${rifiutato}" th:text="'Il voto è stato rifiutato'">Voto rifiutato</h4>
+			<form th:if="!${verbalizzato}" method="post">
+				<input type="hidden" name="rifiuta_voto" value="rifiuta_voto">
+				<input type="hidden" name="matricola" th:value="${iscrizione.getMatricolaStudente()}">
+				<input type="hidden" name="nomeCorso" th:value="${iscrizione.getNomeCorso()}">
+				<input type="hidden" name="dataAppello" th:value="${iscrizione.getDataAppello().toString()}">
+				<input type="submit" th:if="!${rifiutato}" value="Rifiuta">
+				<h4 th:unless="!${rifiutato}" th:text="'Il voto è stato rifiutato'">Voto rifiutato</h4>
+			</form>
+			<h4 th:unless="!${verbalizzato}" th:text="'Il voto è stato verbalizzato'">Voto verbalizzato</h4>
+			
 		</div>
 	</div>
 </body>

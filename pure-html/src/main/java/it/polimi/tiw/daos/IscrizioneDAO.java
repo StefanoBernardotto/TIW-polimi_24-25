@@ -4,7 +4,10 @@ import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLDataException;
 import java.sql.SQLException;
+
+import com.mysql.cj.x.protobuf.MysqlxExpr.ColumnIdentifier;
 
 import it.polimi.tiw.beans.Iscrizione;
 
@@ -36,6 +39,17 @@ public class IscrizioneDAO {
 				}
 				return iscrizione;
 			}
+		}
+	}
+	
+	public void rifiutaEsito(int matricola, Date dataAppello, String nomeCorso) throws SQLException {
+		String queryString = "update iscrizioni set stato_pubblicazione = 'rifiutato' where nome_corso = ? and data_appello = ? and matricola_studente = ?";
+		try(PreparedStatement ps = connection.prepareStatement(queryString)){
+			ps.setString(1, nomeCorso);
+			ps.setDate(2, dataAppello);
+			ps.setInt(3, matricola);
+			ps.executeUpdate();
+			System.out.println("ESEGUITO UPDATE");
 		}
 	}
 }

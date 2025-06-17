@@ -21,7 +21,8 @@ public class CorsoDAO {
 		List<Corso> listaCorsi;
 		String queryString = "select corsi.nome as nome, docenti.nome as nome_doc, docenti.cognome as cognome_doc, docenti.codice_docente as codice_doc "
 				+ "from iscrizioni_corsi join corsi on nome = nome_corso join docenti on docenti.codice_docente = corsi.codice_docente "
-				+ "where matricola_studente = ?";
+				+ "where matricola_studente = ? "
+				+ "order by corsi.nome desc";
 		try(PreparedStatement ps = connection.prepareStatement(queryString)){
 			ps.setInt(1, matricola);			
 			try(ResultSet res = ps.executeQuery()){

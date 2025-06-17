@@ -90,5 +90,8 @@ public class Iscrizione {
 		return this.statoPubblicazione.equals("rifiutato");
 	}
 	
+	public boolean isVerbalizzato() {
+		return this.statoPubblicazione.equals("verbalizzato");
+	}
 
 }

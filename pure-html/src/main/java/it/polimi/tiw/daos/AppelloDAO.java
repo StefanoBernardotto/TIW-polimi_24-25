@@ -17,7 +17,7 @@ public class AppelloDAO {
 	
 	public List<Appello> getAppelliByCorso(String nomecorso) throws SQLException{
 		List<Appello> listaAppelli;
-		String queryString = "select data, nome_corso from appelli where nome_corso = ?";
+		String queryString = "select data, nome_corso from appelli where nome_corso = ? order by data desc";
 		try(PreparedStatement ps = connection.prepareStatement(queryString)){
 			ps.setString(1, nomecorso);
 			try(ResultSet res = ps.executeQuery()){
