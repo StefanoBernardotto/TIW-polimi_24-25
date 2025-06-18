@@ -19,54 +19,51 @@ import org.thymeleaf.web.IWebExchange;
 import org.thymeleaf.web.servlet.JakartaServletWebApplication;
 
 import it.polimi.tiw.beans.Corso;
-import it.polimi.tiw.beans.Studente;
 import it.polimi.tiw.daos.CorsoDAO;
-import it.polimi.tiw.daos.StudenteDAO;
 import it.polimi.tiw.misc.DatabaseInit;
 import it.polimi.tiw.misc.ThymeleafInit;
 
-@WebServlet("/HomeStudente")
-public class HomeStudente extends HttpServlet {
+@WebServlet("/HomeDocente")
+public class HomeDocente extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private TemplateEngine templateEngine;
-	private Connection connection;
+    private Connection connection;
+    private TemplateEngine templateEngine;
+    
+    @Override
+    public void init() throws UnavailableException {
+    	connection = DatabaseInit.initDB(getServletContext());
+    	templateEngine = ThymeleafInit.initialize(getServletContext());
+    }
 
-	@Override
-	public void init() throws UnavailableException {
-		connection = DatabaseInit.initDB(getServletContext());
-		templateEngine = ThymeleafInit.initialize(getServletContext());
-	}
-
-	@Override
-	protected void doGet(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-		IWebExchange webExchange = JakartaServletWebApplication.buildApplication(getServletContext())
+    @Override
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    	IWebExchange webExchange = JakartaServletWebApplication.buildApplication(getServletContext())
 				.buildExchange(request, response);
 		WebContext context = new WebContext(webExchange);
 
 		HttpSession session = request.getSession();
-		Integer matricola = (Integer) session.getAttribute("matricola_studente");
-		if (!session.isNew() && matricola != null) {
+		Integer codiceDocente = (Integer) session.getAttribute("codice_docente");
+		if (!session.isNew() && codiceDocente != null) {
 			CorsoDAO corsoDAO = new CorsoDAO(connection);
 			try {
-				List<Corso> listaCorsi = corsoDAO.getCorsiByStudente(matricola);
+				List<Corso> listaCorsi = corsoDAO.getCorsiByDocente(codiceDocente);
 				if(!listaCorsi.isEmpty()) {
 					context.setVariable("listaCorsi", listaCorsi);
 				} else {
 					context.setVariable("messaggioListaVuota", "Nessun corso da visualizzare");
 				}
-				templateEngine.process("studente/home_studente", context, response.getWriter());
+				templateEngine.process("docente/home_docente", context, response.getWriter());
 			} catch (SQLException e) {
 				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Errore nel collegamento al database");
 				return;
 			}
 		} else {
-			response.sendRedirect(request.getContextPath() + "/LoginStudente");
+			response.sendRedirect(request.getContextPath() + "/LoginDocente");
 			return;
 		}
 	}
-	
-	@Override
+
+    @Override
 	public void destroy() {
 		try {
 			if(!connection.isClosed()) {
@@ -76,5 +73,4 @@ public class HomeStudente extends HttpServlet {
 			e.printStackTrace();
 		}
 	}
-
 }

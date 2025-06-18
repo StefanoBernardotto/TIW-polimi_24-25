@@ -49,7 +49,6 @@ public class IscrizioneDAO {
 			ps.setDate(2, dataAppello);
 			ps.setInt(3, matricola);
 			ps.executeUpdate();
-			System.out.println("ESEGUITO UPDATE");
 		}
 	}
 }

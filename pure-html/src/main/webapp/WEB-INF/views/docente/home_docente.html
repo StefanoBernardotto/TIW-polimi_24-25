@@ -7,7 +7,7 @@
 <body>
 	<div id="top-bar">
 		<a th:href="@{/Logout}">Logout</a>
-		<a th:href="@{/Logout}">Verbali</a>
+		<a th:href="@{/Verbali}">Verbali</a>
 	</div>
 	<br>
 	<div id="ko-content" th:if="${messaggioListaVuota} != null" th:text="${messaggioListaVuota}">Lista vuota</div>
@@ -17,29 +17,21 @@
 			<thead>
 				<tr>
 					<th>Nome corso</th>
-					<th>Docente</th>
 					<th></th>
 				</tr>
 			</thead>
 			<tbody th:remove="all-but-first">
 				<tr th:each="corso : ${listaCorsi}">
-					<td th:text="${corso.getNome()}">Corso 1</td>
-					<td th:text="${corso.getNomeCognomeDocente()}">Docente</td>
-					<td>
-						<a th:href="@{/AppelliStudente(nomeCorso=${corso.getNome()})}">Appelli</a>
-					</td>
+					<td><a th:text="${corso.getNome()}" th:href="@{/AppelliDocente(nomeCorso=${corso.getNome()})}">Corso 1</a></td>
 				</tr>
 				<tr>
-					<td><a href="Appelli_studente.html">Corso 1</a></td>
-					<td>Docente</td>
+					<td><a href="Appelli_docente.html">Corso 1</a></td>
 				</tr>
 				<tr>
-					<td><a href="Appelli_studente.html">Corso 1</a></td>
-					<td>Docente</td>
+					<td><a href="Appelli_docente.html">Corso 1</a></td>
 				</tr>
 				<tr>
-					<td><a href="Appelli_studente.html">Corso 1</a></td>
-					<td>Docente</td>
+					<td><a href="Appelli_docente.html">Corso 1</a></td>
 				</tr>
 			</tbody>
 		</table>

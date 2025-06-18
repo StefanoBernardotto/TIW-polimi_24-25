@@ -1,34 +1,39 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta charset="UTF-8">
-<title>Appelli - Docente</title>
+<title>Appelli - Studente</title>
 </head>
 <body>
-    <div id="top-bar">
-        <a href="HomeDocente.html">Indietro</a>
-        <a href="logout.html">Logout</a>
-        <a href="verbali.html">Verbali</a>
-    </div><br>
-    <div id="content">
-        <h3>Appelli del corso:</h3>
-        <table>
-            <tr>
-                <th>Data</th>
-            </tr>
-            <tr>
-                <td><a href="Iscritti.html">2023-01-15</a></td>
-            </tr>
-            <tr>
-                <td><a href="Iscritti.html">2023-01-22</a></td>
-            </tr>
-            <tr>
-                <td><a href="Iscritti.html">2023-01-29</a></td>
-            </tr>
-            <tr>
-                <td><a href="Iscritti.html">2023-02-05</a></td>
-            </tr>
-        </table>
-    </div>
+	<div id="top-bar">
+		<a th:href="@{/HomeDocente}">Indietro</a>
+		<a th:href="@{/Logout}">Logout</a>
+		<a th:href="@{/Verbali}">Verbali</a>
+	</div>
+	<br>
+	<div id="ko-content-appelli" th:if="${messaggioListaVuota} != null"
+		th:text="${messaggioListaVuota}">Lista vuota</div>
+	<div id="ok-content-appelli" th:unless="${messaggioListaVuota} != null">
+		<h3>Appelli del corso:</h3>
+		<table>
+			<thead>
+				<tr>
+					<th>Data</th>
+				</tr>
+			</thead>
+			<tbody th:remove="all-but-first">
+				<tr th:each="appello : ${listaAppelli}">
+					<td><a th:href="@{/Esito(nome_corso=${appello.getNomeCorso()}, data=${appello.getDataString()})}" th:text="${appello.getData()}">2023-03-29</a></td>				
+				</tr>
+				<tr>
+					<td><a href="esito.html">2023-01-29</a></td>
+				</tr>
+				<tr>
+					<td><a href="esito.html">2023-02-05</a></td>
+				</tr>
+			</tbody>
+
+		</table>
+	</div>
 </body>
 </html>

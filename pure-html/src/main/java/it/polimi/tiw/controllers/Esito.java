@@ -96,14 +96,12 @@ public class Esito extends HttpServlet {
 	
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
-		System.out.println("TEST1");
 		HttpSession session = request.getSession();
 		Integer matricolaStudente = (Integer) session.getAttribute("matricola_studente");
 		if (session.isNew() || matricolaStudente == null) {
 			response.sendRedirect(request.getContextPath() + "/LoginStudente");
 			return;
 		}
-		System.out.println("TEST2");
 		String check = request.getParameter("rifiuta_voto");
 		String nomeCorso = request.getParameter("nomeCorso");
 		Date dataAppello;
@@ -114,15 +112,11 @@ public class Esito extends HttpServlet {
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Formato errato");
 			return;
 		}
-		System.out.println("TEST3");
 		if(check.equals("rifiuta_voto") && matricolaStudente < 999999 && matricolaStudente > 100000 && nomeCorso != null && dataAppello != null) {
 			IscrizioneDAO iscrizioneDAO = new IscrizioneDAO(connection);
 			try {
-				System.out.println("TEST4");
 				iscrizioneDAO.rifiutaEsito(matricolaStudente, dataAppello, nomeCorso);
-				System.out.println("TEST5");
 				response.sendRedirect(getServletContext().getContextPath() +  "/Esito?nome_corso=" + nomeCorso + "&data=" + dataAppello.toString());
-				System.out.println("TEST6");
 				return;
 			} catch (SQLException e) {
 				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Errone nella connessione al database");

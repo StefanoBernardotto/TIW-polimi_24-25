@@ -30,4 +30,9 @@ public class Corso {
 		this.setCodiceDocente(codiceDocente);
 		this.nomeCognomeDocente = nomeCognomeDocente;
 	}
+	public Corso(String nome) {
+		this.nome = nome;
+		this.codiceDocente = -1;
+		this.nomeCognomeDocente = null;
+	}
 }

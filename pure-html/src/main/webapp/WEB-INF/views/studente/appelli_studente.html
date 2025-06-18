@@ -11,7 +11,7 @@
 	</div>
 	<br>
 	<div id="ko-content-appelli" th:if="${messaggioListaVuota} != null"
-		th:text="messaggioListaVuota">Lista vuota</div>
+		th:text="${messaggioListaVuota}">Lista vuota</div>
 	<div id="ok-content-appelli" th:unless="${messaggioListaVuota} != null">
 		<h3>Appelli del corso:</h3>
 		<table>

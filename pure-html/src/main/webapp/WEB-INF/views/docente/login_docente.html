@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta charset="UTF-8">
-<title>Login - Studente</title>
+<title>Login - Docente</title>
 </head>
 <body>
 	<div id="top-bar">
@@ -10,10 +10,10 @@
 	</div><br>
 	<form method="POST">
 		<div th:if="${messaggioErroreLogin != null}" th:text="${messaggioErroreLogin}">Errore<br></div>
-		<label for="matricola">Numero di matricola:</label>
-		<input type="text" name="matricola" id="matricola" required><br>
+		<label for="matricola">Codice docente:</label>
+		<input type="text" name="codice_docente" required><br>
 		<label for="password">Password:</label>
-		<input type="password" name="password" id="password" required><br>
+		<input type="password" name="password" required><br>
 		<input type="submit" value="Accedi">
 	</form>
 </body>
