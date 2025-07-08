@@ -39,11 +39,9 @@ public class IscrizioneDAO {
 				Iscrizione iscrizione;
 				if (res.isBeforeFirst()) {
 					res.next();
-					iscrizione = new Iscrizione(
-							res.getString("nome_corso"), res.getDate("data_appello"),
+					iscrizione = new Iscrizione(res.getString("nome_corso"), res.getDate("data_appello"),
 							res.getInt("matricola_studente"), res.getString("voto"),
-							res.getString("stato_pubblicazione")
-					);
+							res.getString("stato_pubblicazione"));
 				} else {
 					iscrizione = null;
 				}
@@ -76,46 +74,54 @@ public class IscrizioneDAO {
 			try (ResultSet res = ps.executeQuery()) {
 				if (res.isBeforeFirst()) {
 					while (res.next()) {
-						Iscrizione iscrizione = new Iscrizione(
-								nomeCorso,
-								dataAppello,
-								res.getInt("matricola"),
-								res.getString("voto"), 
-								res.getString("stato_pubblicazione")
-						);
-						Studente studente = new Studente(
-								res.getInt("matricola"), 
-								res.getString("nome"),
-								res.getString("cognome"), 
-								res.getString("email"), 
-								null, 
-								res.getString("corso_laurea")
-						);
+						Iscrizione iscrizione = new Iscrizione(nomeCorso, dataAppello, res.getInt("matricola"),
+								res.getString("voto"), res.getString("stato_pubblicazione"));
+						Studente studente = new Studente(res.getInt("matricola"), res.getString("nome"),
+								res.getString("cognome"), res.getString("email"), null, res.getString("corso_laurea"));
 						list.add(new Pair<Iscrizione, Studente>(iscrizione, studente));
 					}
 				}
 			}
 		}
-		if(campoOrdine.equals("voto")) {
+		if (campoOrdine.equals("voto")) {
 			Collections.sort(list, new ComparatoreVoti(desc));
 		}
 		return list;
 	}
+
+	public void modificaVoto(int matricolaStudente, String nomeCorso, Date dataAppello, String nuovoVoto)
+			throws SQLException, IllegalArgumentException {
+		Iscrizione iscrizione = this.getDatiIscrizione(matricolaStudente, dataAppello, nomeCorso);
+		if (iscrizione == null) {
+			throw new SQLException("Iscrizione nulla");
+		}
+		if ("inserito".equals(iscrizione.getStatoPubblicazione())
+				|| "non inserito".equals(iscrizione.getStatoPubblicazione())) {
+			if (ComparatoreVoti.isValid(nuovoVoto)) {
+				String queryString = "update iscrizioni set stato_pubblicazione = 'inserito', voto = ? where nome_corso = ? and data_appello = ? and matricola_studente = ?";
+				try (PreparedStatement ps = connection.prepareStatement(queryString)) {
+					ps.setString(1, nuovoVoto);
+					ps.setString(2, nomeCorso);
+					ps.setDate(3, dataAppello);
+					ps.setInt(4, matricolaStudente);
+					ps.executeUpdate();
+				}
+			} else {
+				throw new IllegalArgumentException("Voto non valido");
+			}
+		} else {
+			throw new SQLException("Stato di pubblicazione non valido");
+		}
+
+	}
 	
+	public void pubblicaVoti(String nomeCorso, Date dataAppello) throws SQLException {
+		String queryString = "update iscrizioni set stato_pubblicazione = 'pubblicato' where stato_pubblicazione = 'inserito' and nome_corso = ? and data_appello = ?;";
+		try(PreparedStatement ps = connection.prepareStatement(queryString)){
+			ps.setString(1, nomeCorso);
+			ps.setDate(2, dataAppello);
+			ps.executeUpdate();
+		}
+	}
+
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

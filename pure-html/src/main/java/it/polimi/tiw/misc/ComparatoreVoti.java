@@ -39,6 +39,10 @@ public class ComparatoreVoti implements Comparator<Pair<Iscrizione, Studente>>{
 		return tmpList;
 	}
 	
+	public static boolean isValid(String voto) {
+		return (voto != null && voto != "" && list.contains(voto));
+	}
+	
 	public ComparatoreVoti(boolean decrescente) {
 		this.decrescente = decrescente;
 	}

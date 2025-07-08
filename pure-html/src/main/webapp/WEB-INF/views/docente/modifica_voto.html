@@ -13,17 +13,19 @@
     </div><br>
     <div id="content">
         <h3>Modifica voto</h3>
-        <form>
+        <form method="post">
             <p th:text="'Matricola: ' + ${studente.getMatricola()}">Matricola: 123456</p>
             <p th:text="'Cognome: ' + ${studente.getCognome()}">Cognome: Rossi</p>
             <p th:text="'Nome: ' + ${studente.getNome()}">Nome: Mario</p>
             <p th:text="'Email: ' + ${studente.getEmail()}">Email: mario.rossi@example.com</p>
             <p th:text="'Corso di laurea: ' + ${studente.getCorsoLaurea()}">Corso di laurea: Ingegneria Informatica</p>
             <label th:text="'Seleziona un voto:'" for="voto">Voto:</label>
-            <select name="voto">
-            	<option th:each="voto : ${voti}" value="${voto}" th:text="${voto}">Voto</option>
+            <select name="voto" required>
+            	<option th:each="voto : ${voti}" th:value="${voto}" th:text="${voto}" th:selected="${voto == iscrizione.getVoto()}">Voto</option>
             </select>
-            <input type="text" name="voto" value="28" required><br>
+            <input type="hidden" th:value="${studente.getMatricola()}" name="matricola">
+            <input type="hidden" th:value="${iscrizione.getNomeCorso()}" name="nome_corso">
+            <input type="hidden" th:value="${iscrizione.getDataAppello().toString()}" name="data_appello">
             <input type="submit" value="Salva">
         </form>
 	</div>

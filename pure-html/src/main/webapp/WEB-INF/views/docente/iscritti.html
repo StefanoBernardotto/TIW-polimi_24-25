@@ -35,7 +35,7 @@
 					<td th:text="${iscrittoPair.getSecond().getCorsoLaurea()}">Ingengneria informatica</td>
 					<td th:text="${iscrittoPair.getFirst().getVoto()}">30</td>
 					<td th:text="${iscrittoPair.getFirst().getStatoPubblicazione()}">Pubblicato</td>
-					<td><a th:if="${iscrittoPair.getFirst().getStatoPubblicazione()} == 'non inserito'" 
+					<td><a th:if="${iscrittoPair.getFirst().getStatoPubblicazione() == 'non inserito' or iscrittoPair.getFirst().getStatoPubblicazione() == 'inserito'}" 
 						th:href="@{/ModificaVoto(nome_corso=${nomeCorso}, data_appello=${dataAppello}, matricola=${iscrittoPair.getSecond().getMatricola()})}" 
 						th:text="Modifica">Modifica</a></td>
 				</tr>
@@ -59,20 +59,21 @@
 					<td>Superato</td>
 					<td><input type="button" value="Modifica"></td>
 				</tr>
-				<tr>
-					<td>345678</td>
-					<td>Anna</td>
-					<td>Neri</td>
-					<td>anna.neri@example.com</td>
-					<td>Ingegneria Biomedica</td>
-					<td>30</td>
-					<td>Superato</td>
-					<td><input type="button" value="Modifica"></td>
-				</tr>
 			</tbody>
 		</table>
-		<input type="button" value="Pubblica"> <input type="button"
-			value="Verbalizza">
+		<br>
+		<form method="post">
+			<input type="hidden" name="nome_corso" value="${nomeCorso}">
+			<input type="hidden" name="data_appello" value="${dataAppello}">
+			<input type="hidden" name="azione" value="pubblica">
+			<input type="submit" value="Pubblica">
+		</form>
+		<form method="post">
+			<input type="hidden" name="nome_corso" value="${nomeCorso}">
+			<input type="hidden" name="data_appello" value="${dataAppello}">
+			<input type="hidden" name="azione" value="verbalizza">
+			<input type="submit" value="Verbalizza">
+		</form>
 	</div>
 </body>
 </html>

@@ -39,7 +39,7 @@ public class Logger {
 	}
 
 	private static void log(Level level, String message) {
-		if (level.ordinal() < minLevel.ordinal())
+		if (level.ordinal() <= minLevel.ordinal())
 			return;
 
 		String timestamp = LocalDateTime.now().format(formatter);
@@ -49,12 +49,8 @@ public class Logger {
 
 		String logLine = String.format("%s[%s] [%s] [%s] [%s] %s%s", color, timestamp, thread, level, caller, message,
 				RESET);
-
-		if (level == Level.ERROR) {
-			System.err.println(logLine);
-		} else {
-			System.out.println(logLine);
-		}
+		
+		System.out.println(logLine);
 	}
 
 	private static String getCallerClassName() {

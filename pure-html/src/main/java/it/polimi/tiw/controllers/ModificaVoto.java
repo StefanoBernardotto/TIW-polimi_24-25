@@ -25,6 +25,7 @@ import it.polimi.tiw.daos.StudenteDAO;
 import it.polimi.tiw.misc.ComparatoreVoti;
 import it.polimi.tiw.misc.DatabaseInit;
 import it.polimi.tiw.misc.ThymeleafInit;
+import it.polimi.tiw.misc.Logger;
 
 @WebServlet("/ModificaVoto")
 public class ModificaVoto extends HttpServlet {
@@ -50,7 +51,6 @@ public class ModificaVoto extends HttpServlet {
 			response.sendRedirect(request.getContextPath() + "/LoginDocente");
 			return;
 		}
-		
 		String nomeCorso = request.getParameter("nome_corso");
 		Date dataAppello;
 		Integer matricolaStudente;
@@ -97,13 +97,50 @@ public class ModificaVoto extends HttpServlet {
 		
 		
 	}
-
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-	 */
+	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		doGet(request, response);
+		IWebExchange webExchange = JakartaServletWebApplication.buildApplication(getServletContext())
+				.buildExchange(request, response);
+		WebContext context = new WebContext(webExchange);
+
+		HttpSession session = request.getSession();
+		Integer codiceDocente = (Integer) session.getAttribute("codice_docente");
+		if(session.isNew() || codiceDocente == null) {
+			response.sendRedirect(request.getContextPath() + "/LoginDocente");
+			return;
+		}
+		
+		String nomeCorso = request.getParameter("nome_corso");
+		String nuovoVoto = request.getParameter("voto");
+		Date dataAppello;
+		Integer matricolaStudente;
+		try {
+			dataAppello = Date.valueOf(request.getParameter("data_appello"));
+			matricolaStudente = Integer.parseInt(request.getParameter("matricola"));
+			if(matricolaStudente == null || matricolaStudente < 100000 || matricolaStudente > 999999)
+				throw new NumberFormatException();
+		}catch(NumberFormatException exception) {
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Formato matricola errato");
+			return;
+		}catch(IllegalArgumentException e){
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Formato data errato");
+			return;
+		}
+		if(nomeCorso == null || dataAppello == null || matricolaStudente == null || nuovoVoto == null || !ComparatoreVoti.isValid(nuovoVoto)) {
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Parametri errati");
+			return;
+		}
+		
+		IscrizioneDAO iscrizioneDAO = new IscrizioneDAO(connection);
+		try {
+			iscrizioneDAO.modificaVoto(matricolaStudente, nomeCorso, dataAppello, nuovoVoto);
+			response.sendRedirect(request.getContextPath() + "/Iscritti?nome_corso=" + nomeCorso + "&data_appello=" + dataAppello.toString() + "&campo_ordine=start");
+			return;
+		}catch(SQLException | IllegalArgumentException e) {
+			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Errore nella connessione al database");
+			return;
+		}
+		
 	}
 
 }
