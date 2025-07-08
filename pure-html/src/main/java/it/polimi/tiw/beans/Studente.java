@@ -38,7 +38,7 @@ public class Studente {
 		return new String(email);
 	}
 	public void setEmail(String email) {
-		if(email.contains("@") && email.split("@").length == 2 && email.split("@")[1].contains("."))
+		if(email != null && email.contains("@") && email.split("@").length == 2 && email.split("@")[1].contains("."))
 			this.email = email;
 		else
 			throw new RuntimeException("Email non valida: " + email);
@@ -57,4 +57,11 @@ public class Studente {
 		this.password = password;
 		this.corsoLaurea = corsoLaurea;
 	}
+	
+	@Override
+	public String toString() {
+	    return "Studente: " + getMatricola() + ", " + getNome() + ", " + getCognome() + ", " + getEmail() + ", " + getCorsoLaurea();
+	}
+
+	
 }

@@ -93,5 +93,9 @@ public class Iscrizione {
 	public boolean isVerbalizzato() {
 		return this.statoPubblicazione.equals("verbalizzato");
 	}
-
+	
+	@Override
+	public String toString() {
+		return "Iscrizione : " + this.getNomeCorso() + ", " + this.getDataAppello().toString() + ", " + this.getMatricolaStudente() + ", " + this.getVoto() + ", " + this.getStatoPubblicazione();
+	}
 }
