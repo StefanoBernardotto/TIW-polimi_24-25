@@ -37,6 +37,9 @@ public class Iscrizione {
 	}
 
 	public String getVoto() {
+		if(voto == null) {
+			return "<vuoto>";
+		}
 		return new String(voto);
 	}
 
@@ -49,7 +52,7 @@ public class Iscrizione {
 				throw new NumberFormatException();
 			}
 		} catch (NumberFormatException e) {
-			if (voto.equals("assente") || voto.equals("rimandato") || voto.equals("riprovato")
+			if (voto == null || voto.equals("assente") || voto.equals("rimandato") || voto.equals("riprovato")
 					|| voto.equals("30 e lode")) {
 				this.voto = voto;
 			} else {

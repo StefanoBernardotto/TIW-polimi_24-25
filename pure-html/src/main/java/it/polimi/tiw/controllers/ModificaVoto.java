@@ -8,9 +8,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
-import java.util.List;
 import java.io.IOException;
-import java.nio.channels.NonWritableChannelException;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
@@ -23,12 +21,13 @@ import org.thymeleaf.web.servlet.JakartaServletWebApplication;
 import it.polimi.tiw.beans.Iscrizione;
 import it.polimi.tiw.beans.Studente;
 import it.polimi.tiw.daos.IscrizioneDAO;
+import it.polimi.tiw.daos.StudenteDAO;
+import it.polimi.tiw.misc.ComparatoreVoti;
 import it.polimi.tiw.misc.DatabaseInit;
-import it.polimi.tiw.misc.Pair;
 import it.polimi.tiw.misc.ThymeleafInit;
 
-@WebServlet("/Iscritti")
-public class Iscritti extends HttpServlet {
+@WebServlet("/ModificaVoto")
+public class ModificaVoto extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private Connection connection;
 	private TemplateEngine templateEngine;
@@ -39,6 +38,7 @@ public class Iscritti extends HttpServlet {
 		templateEngine = ThymeleafInit.initialize(getServletContext());
 	}
 	
+	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		IWebExchange webExchange = JakartaServletWebApplication.buildApplication(getServletContext())
 				.buildExchange(request, response);
@@ -53,55 +53,57 @@ public class Iscritti extends HttpServlet {
 		
 		String nomeCorso = request.getParameter("nome_corso");
 		Date dataAppello;
+		Integer matricolaStudente;
 		try {
 			dataAppello = Date.valueOf(request.getParameter("data_appello"));
-		}catch(IllegalArgumentException exception) {
+			matricolaStudente = Integer.parseInt(request.getParameter("matricola"));
+			if(matricolaStudente < 100000 || matricolaStudente > 999999)
+				throw new NumberFormatException();
+		}catch(NumberFormatException exception) {
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Formato matricola errato");
+			return;
+		}catch(IllegalArgumentException e){
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Formato data errato");
 			return;
 		}
-		String campoOrdine = request.getParameter("campo_ordine");
-		if(nomeCorso == null || (!campoOrdine.equals("start") && !campoOrdine.equals("matricola") && !campoOrdine.equals("cognome") && 
-				!campoOrdine.equals("nome") && !campoOrdine.equals("email") && !campoOrdine.equals("corso_laurea") && 
-				!campoOrdine.equals("voto") && !campoOrdine.equals("stato_pubblicazione"))) {
-			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Formato parametri errato");
+		if(nomeCorso == null || dataAppello == null || matricolaStudente == null) {
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Parametri mancanti");
 			return;
 		}
-		String oldCampoOrdine = (String) session.getAttribute("old_campo_ordine");
-		Boolean ord;
-		if(campoOrdine.equals("start")) {
-			campoOrdine = new String("matricola");
-			session.setAttribute("old_campo_ordine", campoOrdine);
-			session.setAttribute("ordinamento", false);
-			ord = false;
-		}else if(campoOrdine.equals(oldCampoOrdine)) {
-			ord = ! (Boolean) session.getAttribute("ordinamento");
-			session.setAttribute("ordinamento", ord);
-		}else {
-			session.setAttribute("old_campo_ordine", campoOrdine);
-			session.setAttribute("ordinamento", false);
-			ord = false;
-		}
-		context.setVariable("nomeCorso", nomeCorso);
-		context.setVariable("dataAppello", dataAppello.toString());
+		
 		IscrizioneDAO iscrizioneDAO = new IscrizioneDAO(connection);
 		try {
-			List<Pair<Iscrizione, Studente>> listaIscritti = iscrizioneDAO.getOrderedIscrittiByAppello(dataAppello, nomeCorso, campoOrdine, ord);
-			context.setVariable("listaIscritti", listaIscritti);
-			templateEngine.process("docente/iscritti", context, response.getWriter());
+			Iscrizione iscrizione = iscrizioneDAO.getDatiIscrizione(matricolaStudente, dataAppello, nomeCorso);
+			if(iscrizione != null) {
+				StudenteDAO studenteDAO = new StudenteDAO(connection);
+				Studente s = studenteDAO.getStudenteByMatricola(iscrizione.getMatricolaStudente());
+				if (s == null) {
+					response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Studente non trovato");
+					return;
+				} else {
+					context.setVariable("iscrizione", iscrizione);
+					context.setVariable("studente", s);
+					context.setVariable("voti", ComparatoreVoti.getPossibiliVoti());
+					templateEngine.process("docente/modifica_voto", context, response.getWriter());
+				}
+			}else {
+				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Studente non iscritto all'appello");
+				return;
+			}
 		} catch (SQLException e) {
 			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Errore nella connessione al database");
 			return;
 		}
+		
+		
 	}
 
-	@Override
-	public void destroy() {
-		try {
-			if(!connection.isClosed()) {
-				connection.close();
-			}
-		}catch (SQLException e) {
-			e.printStackTrace();
-		}
+	/**
+	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
+	 */
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		doGet(request, response);
 	}
+
 }

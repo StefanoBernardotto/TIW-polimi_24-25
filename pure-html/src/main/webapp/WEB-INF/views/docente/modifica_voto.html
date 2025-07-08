@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta charset="UTF-8">
 <title>Modifica voto</title>
@@ -14,14 +14,17 @@
     <div id="content">
         <h3>Modifica voto</h3>
         <form>
-            <p>Matricola: 123456</p>
-            <p>Nome: Mario</p>
-            <p>Cognome: Rossi</p>
-            <p>Email: mario.rossi@example.com</p>
-            <p>Corso di laurea: Ingegneria Informatica</p>
-            <label for="voto">Voto:</label>
+            <p th:text="'Matricola: ' + ${studente.getMatricola()}">Matricola: 123456</p>
+            <p th:text="'Cognome: ' + ${studente.getCognome()}">Cognome: Rossi</p>
+            <p th:text="'Nome: ' + ${studente.getNome()}">Nome: Mario</p>
+            <p th:text="'Email: ' + ${studente.getEmail()}">Email: mario.rossi@example.com</p>
+            <p th:text="'Corso di laurea: ' + ${studente.getCorsoLaurea()}">Corso di laurea: Ingegneria Informatica</p>
+            <label th:text="'Seleziona un voto:'" for="voto">Voto:</label>
+            <select name="voto">
+            	<option th:each="voto : ${voti}" value="${voto}" th:text="${voto}">Voto</option>
+            </select>
             <input type="text" name="voto" value="28" required><br>
-            <input type="submit" value="Salva">        
+            <input type="submit" value="Salva">
         </form>
 	</div>
 </body>

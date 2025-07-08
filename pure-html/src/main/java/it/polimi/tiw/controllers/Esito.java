@@ -69,7 +69,7 @@ public class Esito extends HttpServlet {
 
 		IscrizioneDAO iscrizioneDAO = new IscrizioneDAO(connection);
 		try {
-			Iscrizione iscrizione = iscrizioneDAO.getEsitoEsame(matricolaStudente, data, nomeCorso);
+			Iscrizione iscrizione = iscrizioneDAO.getDatiIscrizione(matricolaStudente, data, nomeCorso);
 			if (iscrizione == null) {
 				context.setVariable("messaggioNoEsito", "Non iscritto a questo appello");
 			} else if (!iscrizione.isPubblicato()) {

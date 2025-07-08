@@ -1,8 +1,16 @@
 package it.polimi.tiw.daos;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import javax.swing.ListModel;
+
+import java.security.Identity;
+import java.security.KeyStore.PrivateKeyEntry;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -11,6 +19,7 @@ import java.sql.SQLException;
 
 import it.polimi.tiw.beans.Iscrizione;
 import it.polimi.tiw.beans.Studente;
+import it.polimi.tiw.misc.ComparatoreVoti;
 import it.polimi.tiw.misc.Pair;
 
 public class IscrizioneDAO {
@@ -20,7 +29,7 @@ public class IscrizioneDAO {
 		this.connection = connection;
 	}
 
-	public Iscrizione getEsitoEsame(int matricola, Date dataAppello, String nomeCorso) throws SQLException {
+	public Iscrizione getDatiIscrizione(int matricola, Date dataAppello, String nomeCorso) throws SQLException {
 		String queryString = "select * from iscrizioni where matricola_studente = ? and data_appello = ? and nome_corso = ?";
 		try (PreparedStatement ps = connection.prepareStatement(queryString)) {
 			ps.setInt(1, matricola);
@@ -30,9 +39,11 @@ public class IscrizioneDAO {
 				Iscrizione iscrizione;
 				if (res.isBeforeFirst()) {
 					res.next();
-					iscrizione = new Iscrizione(res.getString("nome_corso"), res.getDate("data_appello"),
+					iscrizione = new Iscrizione(
+							res.getString("nome_corso"), res.getDate("data_appello"),
 							res.getInt("matricola_studente"), res.getString("voto"),
-							res.getString("stato_pubblicazione"));
+							res.getString("stato_pubblicazione")
+					);
 				} else {
 					iscrizione = null;
 				}
@@ -85,6 +96,26 @@ public class IscrizioneDAO {
 				}
 			}
 		}
+		if(campoOrdine.equals("voto")) {
+			Collections.sort(list, new ComparatoreVoti(desc));
+		}
 		return list;
 	}
+	
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

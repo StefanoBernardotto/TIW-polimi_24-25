@@ -23,7 +23,7 @@
 			</thead>
 			<tbody th:remove="all-but-first">
 				<tr th:each="appello : ${listaAppelli}">
-					<td><a th:href="@{/Iscritti(nome_corso=${appello.getNomeCorso()}, data_appello=${appello.getDataString()}, campo_ordine=matricola)}" th:text="${appello.getData()}">2023-03-29</a></td>				
+					<td><a th:href="@{/Iscritti(nome_corso=${appello.getNomeCorso()}, data_appello=${appello.getDataString()}, campo_ordine=start)}" th:text="${appello.getData()}">2023-03-29</a></td>				
 				</tr>
 				<tr>
 					<td><a>2023-01-29</a></td>
