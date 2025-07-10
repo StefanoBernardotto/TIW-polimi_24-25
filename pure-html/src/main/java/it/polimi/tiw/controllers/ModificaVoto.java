@@ -25,7 +25,6 @@ import it.polimi.tiw.daos.StudenteDAO;
 import it.polimi.tiw.misc.ComparatoreVoti;
 import it.polimi.tiw.misc.DatabaseInit;
 import it.polimi.tiw.misc.ThymeleafInit;
-import it.polimi.tiw.misc.Logger;
 
 @WebServlet("/ModificaVoto")
 public class ModificaVoto extends HttpServlet {
@@ -39,6 +38,14 @@ public class ModificaVoto extends HttpServlet {
 		templateEngine = ThymeleafInit.initialize(getServletContext());
 	}
 	
+	/**
+	 * Gestione della richiesta GET. Verifica se il login è effettuato, altrimenti rimanda alla pagina di login.
+	 * Se il login è valido e se i parametri sono validi, mostra i dati dello studente e dell'esame selezionato 
+	 * (template "docente/modifica_voto"),dando la possibilità di modificare il voto
+	 * @param "nome_corso" : nome del corso
+	 * @param "data_appello" : data dell'appello
+	 * @param "matricola" : matricola dello studente di cui si vuole modificare il voto
+	 */
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		IWebExchange webExchange = JakartaServletWebApplication.buildApplication(getServletContext())
@@ -97,11 +104,17 @@ public class ModificaVoto extends HttpServlet {
 		
 		
 	}
+	
+	/**
+	 * Gestione della richiesta POST. Verifica se il login è effettuato, altrimenti rimanda alla pagina di login.
+	 * Se il login è valido e se i parametri sono validi, modifica il voto dell'appello e dello studente selezionato
+	 * @param "nome_corso" : nome del corso
+	 * @param "data_appello" : data dell'appello
+	 * @param "matricola" : matricola dello studente di cui si vuole modificare il voto
+	 * @param "voto" : voto da inserire
+	 */
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		IWebExchange webExchange = JakartaServletWebApplication.buildApplication(getServletContext())
-				.buildExchange(request, response);
-		WebContext context = new WebContext(webExchange);
 
 		HttpSession session = request.getSession();
 		Integer codiceDocente = (Integer) session.getAttribute("codice_docente");

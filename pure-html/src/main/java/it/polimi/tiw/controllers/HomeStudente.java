@@ -19,12 +19,13 @@ import org.thymeleaf.web.IWebExchange;
 import org.thymeleaf.web.servlet.JakartaServletWebApplication;
 
 import it.polimi.tiw.beans.Corso;
-import it.polimi.tiw.beans.Studente;
 import it.polimi.tiw.daos.CorsoDAO;
-import it.polimi.tiw.daos.StudenteDAO;
 import it.polimi.tiw.misc.DatabaseInit;
 import it.polimi.tiw.misc.ThymeleafInit;
 
+/**
+ * Servlet per la home page dello studente
+ */
 @WebServlet("/HomeStudente")
 public class HomeStudente extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -37,6 +38,10 @@ public class HomeStudente extends HttpServlet {
 		templateEngine = ThymeleafInit.initialize(getServletContext());
 	}
 
+	/**
+	 * Gestione della richiesta GET: verifica che il login sia stato effettuato.
+	 * Se sì mostra la lista dei corsi a cui lo studente è iscritto (template "studente/home_studente"), altrimenti reindirizza alla pagina di login
+	 */
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {

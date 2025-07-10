@@ -9,7 +9,6 @@ import java.util.Collections;
 import java.util.List;
 
 import it.polimi.tiw.beans.Corso;
-import it.polimi.tiw.misc.DatabaseInit;
 
 public class CorsoDAO {
 	private Connection connection;
@@ -18,6 +17,12 @@ public class CorsoDAO {
 		this.connection = connection;
 	}
 	
+	/**
+	 * Metodo per ottenere tutti i corsi a cui è iscritto uno studente
+	 * @param matricola : matricola dello studente selezionato
+	 * @return una lista di tutti e soli i {@link Corso} a cui è iscritto lo studente, una lista vuota se non è iscritto a nessun corso
+	 * @throws SQLException
+	 */
 	public List<Corso> getCorsiByStudente(int matricola) throws SQLException{
 		List<Corso> listaCorsi;
 		String queryString = "select corsi.nome as nome, docenti.nome as nome_doc, docenti.cognome as cognome_doc, docenti.codice_docente as codice_doc "
@@ -44,6 +49,12 @@ public class CorsoDAO {
 		}
 	}
 	
+	/**
+	 * Metodo per ottenere tutti i corsi tenuti da un docente
+	 * @param codiceDocente : codice del docente selezionato
+	 * @return una lista di tutti e soli i {@link Corso} tenuti dal docente, una lista vuota se non tiene nessun corso
+	 * @throws SQLException
+	 */
 	public List<Corso> getCorsiByDocente(int codiceDocente) throws SQLException{
 		List<Corso> listaCorsi;
 		String queryString = "select corsi.nome as nome from corsi where codice_docente = ? order by corsi.nome desc";

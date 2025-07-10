@@ -23,6 +23,9 @@ import it.polimi.tiw.daos.AppelloDAO;
 import it.polimi.tiw.misc.DatabaseInit;
 import it.polimi.tiw.misc.ThymeleafInit;
 
+/**
+ * Servlet per la pagina Appelli docente
+ */
 @WebServlet("/AppelliDocente")
 public class AppelliDocente extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -35,6 +38,11 @@ public class AppelliDocente extends HttpServlet {
 		templateEngine = ThymeleafInit.initialize(getServletContext());
 	}
 	
+	/**
+	 * Gestione della richiesta GET. Verifica che il login sia effettuato, altrimenti rimanda alla pagina di login.
+	 * Se il login è valido, verifica i parametri e mostra gli appelli per il corso scelto (template "docente/appelli_docente").
+	 * @param "nomeCorso" : nome del corso selezionato, di cui si vogliono vedere gli appelli disponibili.
+	 */
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		IWebExchange webExchange = JakartaServletWebApplication.buildApplication(getServletContext())

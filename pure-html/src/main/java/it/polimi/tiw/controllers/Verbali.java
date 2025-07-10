@@ -1,6 +1,7 @@
 package it.polimi.tiw.controllers;
 
 import jakarta.servlet.ServletException;
+
 import jakarta.servlet.UnavailableException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -23,6 +24,9 @@ import it.polimi.tiw.daos.VerbaleDAO;
 import it.polimi.tiw.misc.DatabaseInit;
 import it.polimi.tiw.misc.ThymeleafInit;
 
+/**
+ * Servlet per la pagina Verbali del docente
+ */
 @WebServlet("/Verbali")
 public class Verbali extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -35,6 +39,10 @@ public class Verbali extends HttpServlet {
 		templateEngine = ThymeleafInit.initialize(getServletContext());
 	}
 
+	/**
+	 * Gestione della richiesta GET. Verifica se il login è effettuato, altrimenti rimanda alla pagina di login.
+	 * Se il login è valido mostra i verbali relativi ai corsi del docente (template "docente/verbali")
+	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		IWebExchange webExchange = JakartaServletWebApplication.buildApplication(getServletContext())
 				.buildExchange(request, response);

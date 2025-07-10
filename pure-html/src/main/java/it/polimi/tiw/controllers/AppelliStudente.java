@@ -24,7 +24,7 @@ import it.polimi.tiw.misc.DatabaseInit;
 import it.polimi.tiw.misc.ThymeleafInit;
 
 /**
- * Servlet implementation class AppelliStudente
+ * Servlet per la pagina Appelli studente
  */
 @WebServlet("/AppelliStudente")
 public class AppelliStudente extends HttpServlet {
@@ -38,6 +38,11 @@ public class AppelliStudente extends HttpServlet {
 		templateEngine = ThymeleafInit.initialize(getServletContext());
 	}
 
+	/**
+	 * Gestione della richiesta GET. Verifica che il login sia effettuato, altrimenti rimanda alla pagina di login.
+	 * Se il login è valido, verifica i parametri e mostra gli appelli per il corso scelto (template "studente/appelli_studente").
+	 * @param "nomeCorso" : nome del corso selezionato, di cui si vogliono vedere gli appelli disponibili.
+	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		IWebExchange webExchange = JakartaServletWebApplication.buildApplication(getServletContext())

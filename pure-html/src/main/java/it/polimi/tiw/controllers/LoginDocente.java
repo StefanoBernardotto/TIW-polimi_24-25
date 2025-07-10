@@ -22,6 +22,9 @@ import it.polimi.tiw.daos.DocenteDAO;
 import it.polimi.tiw.misc.DatabaseInit;
 import it.polimi.tiw.misc.ThymeleafInit;
 
+/**
+ * Servlet per l'autenticazione del docente
+ */
 @WebServlet("/LoginDocente")
 public class LoginDocente extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -34,6 +37,9 @@ public class LoginDocente extends HttpServlet {
 		templateEngine = ThymeleafInit.initialize(getServletContext());
 	}
 
+	/**
+	 * Gestione della richiesta GET: mostra il template "docente/login_docente.html" per il login del docente
+	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		IWebExchange webExchange = JakartaServletWebApplication.buildApplication(getServletContext())
@@ -42,6 +48,12 @@ public class LoginDocente extends HttpServlet {
 		templateEngine.process("docente/login_docente", context, response.getWriter());
 	}
 
+	/**
+	 * Gestione della richiesta POST: verifica i parametri inviati.
+	 * Se errati mostra il messaggio di errore appropriato, se corretti crea la sessione e manda redirect alla home
+	 * @param "codice_docente": codice identificativo del docente
+	 * @param "password": password di accesso del docente
+	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		IWebExchange webExchange = JakartaServletWebApplication.buildApplication(getServletContext())
@@ -69,10 +81,12 @@ public class LoginDocente extends HttpServlet {
 		try {
 			Docente d = docenteDAO.login(codice, password);
 			if (d == null) {
+				// Credenziali non valide
 				context.setVariable("messaggioErroreLogin", "Credenziali non valide, si prega di riprovare");
 				templateEngine.process("docente/login_docente", context, response.getWriter());
 				return;
 			}
+			// Credenziali valide
 			HttpSession session = request.getSession();
 			session.setAttribute("codice_docente", d.getCodiceDocente());
 			response.sendRedirect(request.getContextPath() + "/HomeDocente");

@@ -10,7 +10,6 @@ import jakarta.servlet.http.HttpSession;
 
 import java.util.List;
 import java.io.IOException;
-import java.lang.runtime.TemplateRuntime;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.UUID;
@@ -30,6 +29,9 @@ import it.polimi.tiw.misc.Logger;
 import it.polimi.tiw.misc.Pair;
 import it.polimi.tiw.misc.ThymeleafInit;
 
+/**
+ * Servlet per la pagina di visualizzazione di un verbale
+ */
 @WebServlet("/Verbale")
 public class VisualizzaVerbale extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -42,7 +44,12 @@ public class VisualizzaVerbale extends HttpServlet {
     	templateEngine = ThymeleafInit.initialize(getServletContext());
     }
 	
-	
+    /**
+	 * Gestione della richiesta GET. Verifica se il login è effettuato, altrimenti rimanda alla pagina di login.
+	 * Se il login è valido e se i parametri sono validi, mostra i dati del verbale selezionato e tutti gli 
+	 * studenti con le informazioni sul voto (template "docente/verbale")
+	 * @param "codice_verbale" : codice del verbale selezionato
+	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		IWebExchange webExchange = JakartaServletWebApplication.buildApplication(getServletContext())
 				.buildExchange(request, response);

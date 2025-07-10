@@ -8,7 +8,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
-import java.sql.Connection;
 
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
@@ -17,6 +16,9 @@ import org.thymeleaf.web.servlet.JakartaServletWebApplication;
 
 import it.polimi.tiw.misc.ThymeleafInit;
 
+/**
+ * Servlet per la pagina di logout
+ */
 @WebServlet("/Logout")
 public class Logout extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -27,6 +29,9 @@ public class Logout extends HttpServlet {
 		templateEngine = ThymeleafInit.initialize(getServletContext());
 	}
 
+	/**
+	 * Gestione della richiesta GET. Se esiste una sessione valida, viene invalidata e viene mostrata la pagina di logout (template "logout")
+	 */
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		IWebExchange webExchange = JakartaServletWebApplication.buildApplication(getServletContext())

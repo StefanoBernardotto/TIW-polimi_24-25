@@ -15,7 +15,7 @@ import org.thymeleaf.web.servlet.JakartaServletWebApplication;
 import it.polimi.tiw.misc.ThymeleafInit;
 
 /**
- * Servlet implementation class Error
+ * Servlet per la pagina Error personalizzata
  */
 @WebServlet("/Error")
 public class Error extends HttpServlet {
@@ -27,6 +27,9 @@ public class Error extends HttpServlet {
     	templateEngine = ThymeleafInit.initialize(getServletContext());
     }
     
+    /**
+     * Gestione della richiesta GET. Viene eseguito quando viene chiamato da un'altra servlet "response.sendError(...)"
+     */
     @Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
     	IWebExchange webExchange = JakartaServletWebApplication.buildApplication(getServletContext())

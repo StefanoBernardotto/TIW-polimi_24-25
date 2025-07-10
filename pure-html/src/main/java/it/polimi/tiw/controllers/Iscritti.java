@@ -9,10 +9,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import java.util.List;
-import java.util.UUID;
-import java.awt.image.renderable.ContextualRenderedImageFactory;
 import java.io.IOException;
-import java.nio.channels.NonWritableChannelException;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
@@ -29,6 +26,9 @@ import it.polimi.tiw.misc.DatabaseInit;
 import it.polimi.tiw.misc.Pair;
 import it.polimi.tiw.misc.ThymeleafInit;
 
+/**
+ * Servlet per la pagina Iscritti del docente
+ */
 @WebServlet("/Iscritti")
 public class Iscritti extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -41,6 +41,13 @@ public class Iscritti extends HttpServlet {
 		templateEngine = ThymeleafInit.initialize(getServletContext());
 	}
 
+	/**
+	 * Gestione della richiesta GET. Verifica se il login è effettuato, altrimenti rimanda alla pagina di login.
+	 * Se il login è valido e se i parametri sono validi, mostra gli iscritti all'appello selezionato (template "docente/iscritti")
+	 * @param "nomeCorso" : nome del corso
+	 * @param "dataAppello" : data dell'appello
+	 * @param "campo_ordine" : campo secondo cui si vuole ordinare, sempre a "start" per il primo accesso alla pagina (non dovuto a click sull'intestazione)
+	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		IWebExchange webExchange = JakartaServletWebApplication.buildApplication(getServletContext())
@@ -70,17 +77,21 @@ public class Iscritti extends HttpServlet {
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Formato parametri errato");
 			return;
 		}
+		// Nella sessione viene salvato il campo di ordinamento che verrà utilizzato alla successiva richiesta (dovuta al click su un'intestazione) 
 		String oldCampoOrdine = (String) session.getAttribute("old_campo_ordine");
 		Boolean ord;
 		if (campoOrdine.equals("start")) {
+			// Primo accesso alla pagina: ordinamento crescente in base alla matricola
 			campoOrdine = new String("matricola");
 			session.setAttribute("old_campo_ordine", campoOrdine);
 			session.setAttribute("ordinamento", false);
 			ord = false;
 		} else if (campoOrdine.equals(oldCampoOrdine)) {
+			// Ulteriore accesso alla pagina con stesso campo di ordinamento precedente: inverte l'ordine
 			ord = !(Boolean) session.getAttribute("ordinamento");
 			session.setAttribute("ordinamento", ord);
 		} else {
+			// Accesso alla pagina con campo ordine diverso dal precedente: ordinamento crescente in base a quel campo
 			session.setAttribute("old_campo_ordine", campoOrdine);
 			session.setAttribute("ordinamento", false);
 			ord = false;
@@ -99,6 +110,14 @@ public class Iscritti extends HttpServlet {
 		}
 	}
 
+	/**
+	 * Gestione della richiesta POST. Verifica se il login è effettuato, altrimenti rimanda alla pagina di login.
+	 * Se il login è valido e se i parametri sono validi, esegue la pubblicazione o la verbalizzazione dei voti.
+	 * Nel caso di pubblicazione, viene mostrata la pagina Iscritti, altrimenti viene mostrato il verbale creato.
+	 * @param "nomeCorso" : nome del corso
+	 * @param "dataAppello" : data dell'appello
+	 * @param "azione" : azione da eseguire, deve essere necessariamente "pubblica" o "verbalizza"
+	 */
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {

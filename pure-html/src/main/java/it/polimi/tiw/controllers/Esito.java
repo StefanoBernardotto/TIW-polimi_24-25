@@ -13,7 +13,6 @@ import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
 
-import org.apache.tomcat.util.openssl.openssl_h;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
 import org.thymeleaf.web.IWebExchange;
@@ -26,6 +25,9 @@ import it.polimi.tiw.daos.StudenteDAO;
 import it.polimi.tiw.misc.DatabaseInit;
 import it.polimi.tiw.misc.ThymeleafInit;
 
+/**
+ * Servlet per la pagina Esito esame dello studente
+ */
 @WebServlet("/Esito")
 public class Esito extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -38,6 +40,14 @@ public class Esito extends HttpServlet {
 		templateEngine = ThymeleafInit.initialize(getServletContext());
 	}
 
+	/**
+	 * Gestione della richiesta GET. Verifica se il login è effettuato, altrimenti rimanda alla pagina di login.
+	 * Se il login è valido, verifica i parametri e, se sono validi, mostra i dati relativi all'esito dell'appello selezionato (template "studente/esito").
+	 * Se lo studente non è iscritto all'appello o se l'esito non è stato pubblicato mostra il relativo messaggio,
+	 * altrimenti mostra i dati dell'esito e, se non verbalizzato, il bottone per rifiutarlo.
+	 * @param "nome_corso" : nome del corso selezionato
+	 * @param "data" : data dell'appello selezionato
+	 */
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
@@ -94,6 +104,13 @@ public class Esito extends HttpServlet {
 		}
 	}
 	
+	/**
+	 * Gestione della richiesta POST. Verifica se il login è effettuato, altrimenti rimanda alla pagina di login.
+	 * Se il login è valido e se i parametri sono validi, modifica il database e rimanda alla pagina dell'esito.
+	 * @param "rifiuta_voto" : campo di verifica, deve essere sempre "rifiuta_voto"
+	 * @param "nomeCorso" : nome del corso
+	 * @param "dataAppello" : data dell'appello 
+	 */
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
 		HttpSession session = request.getSession();

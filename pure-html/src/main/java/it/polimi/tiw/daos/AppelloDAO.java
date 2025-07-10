@@ -14,12 +14,17 @@ public class AppelloDAO {
 	public AppelloDAO(Connection connection) {
 		this.connection = connection;
 	}
-	
-	public List<Appello> getAppelliByCorso(String nomecorso) throws SQLException{
+	/**
+	 * Metodo per ottenere la lista degli appelli disponibili per un corso
+	 * @param nomeCorso : nome del corso selezionato
+	 * @return una lista di tutti e soli gli {@link Appello} del corso selezionato, una lista vuota se non ce ne sono
+	 * @throws SQLException
+	 */
+	public List<Appello> getAppelliByCorso(String nomeCorso) throws SQLException{
 		List<Appello> listaAppelli;
 		String queryString = "select data, nome_corso from appelli where nome_corso = ? order by data desc";
 		try(PreparedStatement ps = connection.prepareStatement(queryString)){
-			ps.setString(1, nomecorso);
+			ps.setString(1, nomeCorso);
 			try(ResultSet res = ps.executeQuery()){
 				if(!res.isBeforeFirst()) {
 					listaAppelli = Collections.emptyList();

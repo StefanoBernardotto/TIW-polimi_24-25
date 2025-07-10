@@ -4,8 +4,6 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-import org.eclipse.jdt.internal.compiler.ast.ThisReference;
-
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.UnavailableException;
 

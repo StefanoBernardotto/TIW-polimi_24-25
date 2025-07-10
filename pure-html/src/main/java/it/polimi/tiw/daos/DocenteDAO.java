@@ -13,10 +13,17 @@ public class DocenteDAO {
 		this.connection = c;
 	}
 
-	public Docente login(int cod, String psw) throws SQLException{
+	/**
+	 * Metodo per verificare le credenziali di un docente
+	 * @param codice : codice del docente
+	 * @param psw : password di accesso
+	 * @return un {@link Docente} relativo alle credenziali di accesso, {@code null} se non esiste
+	 * @throws SQLException
+	 */
+	public Docente login(int codice, String psw) throws SQLException{
 		String queryString = "select * from Docenti where codice_docente = ? and password = ?";
 		try(PreparedStatement ps = connection.prepareStatement(queryString)) {
-			ps.setInt(1, cod);
+			ps.setInt(1, codice);
 			ps.setString(2, psw);
 			try(ResultSet res = ps.executeQuery()){
 				if(!res.isBeforeFirst()) {
