@@ -6,10 +6,8 @@
 </head>
 <body>
     <div id="top-bar">
-        <a href="HomeDocente.html">Home</a>
-        <a href="Iscritti.html">Indietro</a>
-        <a href="logout.html">Logout</a>
-        <a href="verbali.html">Verbali</a>
+        <a href="@{/Iscritti(nome_corso=${iscrizione.getNomeCorso()}, data_appello=${iscrizione.getDataAppello().toString()}, campo_ordine=start)">Indietro</a>
+        <a href="@{/Logout}">Logout</a>
     </div><br>
     <div id="content">
         <h3>Modifica voto</h3>

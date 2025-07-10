@@ -8,7 +8,7 @@ public class Verbale {
 	private UUID codice;
 	private Date dataCreazione;
 	private Time oraCreazione;
-	private String nomecorso;
+	private String nomeCorso;
 	private Date dataAppello;
 	public String getCodiceToString() {
 		return new String(codice.toString());
@@ -28,11 +28,11 @@ public class Verbale {
 	public void setOraCreazione(Time oraCreazione) {
 		this.oraCreazione = oraCreazione;
 	}
-	public String getNomecorso() {
-		return new String(nomecorso);
+	public String getNomeCorso() {
+		return new String(nomeCorso);
 	}
-	public void setNomecorso(String nomecorso) {
-		this.nomecorso = nomecorso;
+	public void setNomeCorso(String nomecorso) {
+		this.nomeCorso = nomecorso;
 	}
 	public Date getDataAppello() {
 		return new Date(dataAppello.getTime());
@@ -44,14 +44,14 @@ public class Verbale {
 		this.codice = UUID.randomUUID();
 		this.dataCreazione = dataCreazione;
 		this.oraCreazione = oraCreazione;
-		this.nomecorso = nomecorso;
+		this.nomeCorso = nomecorso;
 		this.dataAppello = dataAppello;
 	}
 	public Verbale(UUID codice, Date dataCreazione, Time oraCreazione, String nomecorso, Date dataAppello) {
 		this.codice = codice;
 		this.dataCreazione = dataCreazione;
 		this.oraCreazione = oraCreazione;
-		this.nomecorso = nomecorso;
+		this.nomeCorso = nomecorso;
 		this.dataAppello = dataAppello;
 	}
 	

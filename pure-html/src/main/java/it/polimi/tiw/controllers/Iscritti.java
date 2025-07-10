@@ -9,6 +9,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import java.util.List;
+import java.util.UUID;
+import java.awt.image.renderable.ContextualRenderedImageFactory;
 import java.io.IOException;
 import java.nio.channels.NonWritableChannelException;
 import java.sql.Connection;
@@ -87,7 +89,7 @@ public class Iscritti extends HttpServlet {
 		context.setVariable("dataAppello", dataAppello.toString());
 		IscrizioneDAO iscrizioneDAO = new IscrizioneDAO(connection);
 		try {
-			List<Pair<Iscrizione, Studente>> listaIscritti = iscrizioneDAO.getOrderedIscrittiByAppello(dataAppello,
+			List<Pair<Iscrizione, Studente>> listaIscritti = iscrizioneDAO.getOrderedIscritti(dataAppello,
 					nomeCorso, campoOrdine, ord);
 			context.setVariable("listaIscritti", listaIscritti);
 			templateEngine.process("docente/iscritti", context, response.getWriter());
@@ -130,7 +132,14 @@ public class Iscritti extends HttpServlet {
 				iscrizioneDAO.pubblicaVoti(nomeCorso, dataAppello);
 				response.sendRedirect(request.getContextPath() + "/Iscritti?nome_corso=" + nomeCorso + "&data_appello=" + dataAppello + "&campo_ordine=start");
 			} else if (azione.equals("verbalizza")) {
-				
+				String codiceVerbaleString = iscrizioneDAO.verbalizzaVoti(nomeCorso, dataAppello);
+				if("no-rows".equals(codiceVerbaleString)) {
+					response.sendRedirect(request.getContextPath() + "/Iscritti?nome_corso=" + nomeCorso + "&data_appello=" + dataAppello.toString() + "&campo_ordine=start");
+					return;
+				}else {
+					response.sendRedirect(request.getContextPath() + "/Verbale?codice_verbale=" + codiceVerbaleString);
+					return;
+				}
 			}
 		} catch (SQLException e) {
 			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Errore nella connessione al database");

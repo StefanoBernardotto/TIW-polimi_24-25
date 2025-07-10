@@ -6,23 +6,22 @@
 </head>
 <body>
 	<div id="top-bar">
-		<a th:href="@{/HomeDocente}">Indietro</a>
+		<a th:href="@{/AppelliDocente(nomeCorso=${nomeCorso})}">Indietro</a>
 		<a th:href="@{/Logout}">Logout</a>
-		<a th:href="@{/Verbali}">Verbali</a>
 	</div>
 	<br>
-	<div id="content">
+	<div th:if="${listaIscritti.size>0}" id="content">
 		<h3>Iscritti all'appello:</h3>
 		<table>
 			<thead>
 				<tr>
-					<td><a th:href="@{/Iscritti(nome_corso=${nomeCorso}, data_appello=${dataAppello}, campo_ordine=matricola)}">Matricola</a></td>
-					<td><a th:href="@{/Iscritti(nome_corso=${nomeCorso}, data_appello=${dataAppello}, campo_ordine=cognome)}">Cognome</a></td>
-					<td><a th:href="@{/Iscritti(nome_corso=${nomeCorso}, data_appello=${dataAppello}, campo_ordine=nome)}">Nome</a></td>
-					<td><a th:href="@{/Iscritti(nome_corso=${nomeCorso}, data_appello=${dataAppello}, campo_ordine=email)}">Email</a></td>
-					<td><a th:href="@{/Iscritti(nome_corso=${nomeCorso}, data_appello=${dataAppello}, campo_ordine=corso_laurea)}">Corso di laurea</a></td>
-					<td><a th:href="@{/Iscritti(nome_corso=${nomeCorso}, data_appello=${dataAppello}, campo_ordine=voto)}">Voto</a></td>
-					<td><a th:href="@{/Iscritti(nome_corso=${nomeCorso}, data_appello=${dataAppello}, campo_ordine=stato_pubblicazione)}">Stato di valutazione</a></td>
+					<td>Matricola</td>
+					<td>Cognome</td>
+					<td>Nome</td>
+					<td>Email</td>
+					<td>Corso di laurea</td>
+					<td>Voto</td>
+					<td>Stato di valutazione</td>
 					<td></td>
 				<tr>
 			</thead>
@@ -75,5 +74,6 @@
 			<input type="submit" value="Verbalizza">
 		</form>
 	</div>
+	<span th:unless="${listaIscritti.size>0}">Nessuno studente iscritto all'appello</span>
 </body>
 </html>
