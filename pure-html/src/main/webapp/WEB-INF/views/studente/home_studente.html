@@ -1,47 +1,60 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head>
-<meta charset="UTF-8">
-<title>Home - Studente</title>
+	<meta charset="UTF-8">
+	<title>Home - Studente</title>
+	<link rel="stylesheet" href="../../../style.css" th:href=@{/style.css}>
 </head>
+
 <body>
-	<div id="top-bar">
-		<a th:href="@{/Logout}">Logout</a>
-	</div>
-	<br>
-	<div id="ko-content" th:if="${messaggioListaVuota} != null" th:text="${messaggioListaVuota}">Lista vuota</div>
-	<div id="ok-content" th:unless="${messaggioListaVuota} != null">
-		<h3>I tuoi corsi</h3>
-		<table>
-			<thead>
-				<tr>
-					<th>Nome corso</th>
-					<th>Docente</th>
-					<th></th>
-				</tr>
-			</thead>
-			<tbody th:remove="all-but-first">
-				<tr th:each="corso : ${listaCorsi}">
-					<td th:text="${corso.getNome()}">Corso 1</td>
-					<td th:text="${corso.getNomeCognomeDocente()}">Docente</td>
-					<td>
-						<a th:href="@{/AppelliStudente(nomeCorso=${corso.getNome()})}">Appelli</a>
-					</td>
-				</tr>
-				<tr>
-					<td><a href="Appelli_studente.html">Corso 1</a></td>
-					<td>Docente</td>
-				</tr>
-				<tr>
-					<td><a href="Appelli_studente.html">Corso 1</a></td>
-					<td>Docente</td>
-				</tr>
-				<tr>
-					<td><a href="Appelli_studente.html">Corso 1</a></td>
-					<td>Docente</td>
-				</tr>
-			</tbody>
-		</table>
+	<div th:replace="fragments/header::topbar-studente(${nome})">HEADER</div>
+	<div class="content-container">
+		<div class="no-content-message" th:if="${messaggioListaVuota} != null" th:text="${messaggioListaVuota}">Lista
+			vuota</div>
+		<div class="content" th:unless="${messaggioListaVuota} != null">
+			<h3>I tuoi corsi</h3>
+			<table class="corsi-table">
+				<thead>
+					<tr>
+						<td>Nome corso</td>
+						<td>Docente</td>
+						<td></td>
+					</tr>
+				</thead>
+				<tbody th:remove="all-but-first">
+					<tr th:each="corso : ${listaCorsi}">
+						<td th:text="${corso.getNome()}">Corso 1</td>
+						<td th:text="${corso.getNomeCognomeDocente()}">Docente</td>
+						<td><a href="" th:href="@{/AppelliStudente(nomeCorso=${corso.getNome()})}">
+								<img class="goto-icon" src="../../../imgs/goto.png" th:src="@{/imgs/goto.png}">
+							</a></td>
+					</tr>
+					<tr>
+						<td><a href="Appelli_studente.html">Corso 1</a></td>
+						<td>Docente</td>
+						<td><a href="@{/AppelliStudente(nomeCorso=${corso.getNome()})}">
+								<img class="goto-icon" src="../../../imgs/goto.png" th:src="@{/imgs/goto.png}">
+							</a></td>
+					</tr>
+					<tr>
+						<td><a href="Appelli_studente.html">Corso 1</a></td>
+						<td>Docente</td>
+						<td><a href="@{/AppelliStudente(nomeCorso=${corso.getNome()})}">
+								<img class="goto-icon" src="../../../imgs/goto.png" th:src="@{/imgs/goto.png}">
+							</a></td>
+					</tr>
+					<tr>
+						<td><a href="Appelli_studente.html">Corso 1</a></td>
+						<td>Docente</td>
+						<td><a href="@{/AppelliStudente(nomeCorso=${corso.getNome()})}">
+								<img class="goto-icon" src="../../../imgs/goto.png" th:src="@{/imgs/goto.png}">
+							</a></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
 	</div>
 </body>
+
 </html>

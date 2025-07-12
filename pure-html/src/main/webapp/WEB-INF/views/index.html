@@ -1,11 +1,21 @@
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head>
-<meta charset="UTF-8">
-<title>Scelta profilo</title>
+	<meta charset="UTF-8">
+	<title>Scelta profilo</title>
+	<link rel="stylesheet" href="../../style.css" th:href=@{/style.css}>
 </head>
+
 <body>
-	<h4>Che profilo vuoi scegliere?</h4>
-	<a th:href="@{/HomeDocente}">Docente</a>
-	<a th:href="@{/HomeStudente}">Studente</a>
+	<div class="wrapper">
+		<div class="profilo-container">
+			<span>Che profilo vuoi scegliere?</span>
+			<div class="button-container">
+				<a href="" th:href="@{/HomeDocente}">Docente</a>
+				<a href="" th:href="@{/HomeStudente}">Studente</a>
+			</div>
+		</div>
+	</div>
 </body>
+
 </html>

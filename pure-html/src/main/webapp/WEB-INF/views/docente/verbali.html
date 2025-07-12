@@ -1,58 +1,67 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head>
-<meta charset="UTF-8">
-<title>Verbali</title>
+    <meta charset="UTF-8">
+    <title>Verbali</title>
+    <link rel="stylesheet" href="../../../style.css" th:href=@{/style.css}>
 </head>
+
 <body>
-    <div id="top-bar">
-        <a th:href="@{/HomeDocente}">Home</a>
-        <a th:href="@{/Logout}">Logout</a>
-    </div><br>
-    <div id="content">
-        <h3>Verbali</h3>
-        <table>
-            <thead>
-                <tr>
-                    <th>Codice verbale</th>
-                    <th>Nome corso</th>
-                    <th>Data appello</th>
-                    <th>Data creazione</th>
-                    <th>Ora creazione</th>
-                </tr>
-            </thead>
-            <tbody th:remove="all-but-first">
-                <tr th:each="verbale : ${listaVerbali}">
-                    <td th:text="${verbale.getCodiceToString()}">123456</td>
-                    <td th:text="${verbale.getNomeCorso()}">Ingegneria Informatica</td>
-                    <td th:text="${verbale.getDataAppello().toString()}">2023-10-01</td>
-                    <td th:text="${verbale.getDataCreazione().toString()}">2023-09-15</td>
-                    <td th:text="${verbale.getOraCreazione().toString()}">10:00</td>
-                    <td><a th:href="@{/Verbale(codice_verbale=${verbale.getCodiceToString()})}" th:text="'Dettagli'">Dettagli</a>
-                </tr>
-                <tr>
-                    <td>654321</td>
-                    <td>Matematica</td>
-                    <td>2023-10-02</td>
-                    <td>2023-09-16</td>
-                    <td>11:00</td>
-                </tr>
-                <tr>
-                    <td>789012</td>
-                    <td>Fisica</td>
-                    <td>2023-10-03</td>
-                    <td>2023-09-17</td>
-                    <td>12:00</td>
-                </tr>
-                <tr>
-                    <td>345678</td>
-                    <td>Chimica</td>
-                    <td>2023-10-04</td>
-                    <td>2023-09-18</td>
-                    <td>13:00</td>
-                </tr>
-            </tbody>
-        </table>
+    <div th:replace="fragments/header::topbar-docente(${nome})">HEADER</div>
+    <div class="wrapper">
+        <div class="content-container">
+            <h3>Verbali</h3>
+            <table class="verbali-table">
+                <thead>
+                    <tr>
+                        <td>Codice verbale</td>
+                        <td>Nome corso</td>
+                        <td>Data appello</td>
+                        <td>Data creazione</td>
+                        <td>Ora creazione</td>
+                        <td></td>
+                    </tr>
+                </thead>
+                <tbody th:remove="all-but-first">
+                    <tr th:each="verbale : ${listaVerbali}">
+                        <td th:text="${verbale.getCodiceToString()}">123456</td>
+                        <td th:text="${verbale.getNomeCorso()}">Ingegneria Informatica</td>
+                        <td th:text="${verbale.getDataAppello().toString()}">2023-10-01</td>
+                        <td th:text="${verbale.getDataCreazione().toString()}">2023-09-15</td>
+                        <td th:text="${verbale.getOraCreazione().toString()}">10:00</td>
+                        <td><a th:href="@{/Verbale(codice_verbale=${verbale.getCodiceToString()})}">
+                                <img class="goto-icon" src="../../../imgs/goto.png" th:src="@{/imgs/goto.png}">
+                            </a></td>
+                    </tr>
+                    <tr>
+                        <td>654321</td>
+                        <td>Matematica</td>
+                        <td>2023-10-02</td>
+                        <td>2023-09-16</td>
+                        <td>11:00</td>
+                        <td><a><img class="goto-icon" src="../../../imgs/goto.png"></a></td>
+                    </tr>
+                    <tr>
+                        <td>789012</td>
+                        <td>Fisica</td>
+                        <td>2023-10-03</td>
+                        <td>2023-09-17</td>
+                        <td>12:00</td>
+                        <td><a><img class="goto-icon" src="../../../imgs/goto.png"></a></td>
+                    </tr>
+                    <tr>
+                        <td>345678</td>
+                        <td>Chimica</td>
+                        <td>2023-10-04</td>
+                        <td>2023-09-18</td>
+                        <td>13:00</td>
+                        <td><a><img class="goto-icon" src="../../../imgs/goto.png"></a></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 </body>
+
 </html>

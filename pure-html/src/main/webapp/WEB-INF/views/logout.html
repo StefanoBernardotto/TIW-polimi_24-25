@@ -1,11 +1,17 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head>
-<meta charset="UTF-8">
-<title>Logout</title>
+	<meta charset="UTF-8">
+	<title>Logout</title>
+	<link rel="stylesheet" href="../../style.css" th:href=@{/style.css}>
 </head>
+
 <body>
-	<h3>Logout effettuato con successo</h3><br>
-	<a th:href="@{/}">Effettua l'accesso</a>
+	<div class="wrapper">
+		<h4>Logout effettuato con successo</h4>
+		<a class="logout-a" href="" th:href="@{/}">Clicca per effettuare l'accesso</a>
+	</div>
 </body>
+
 </html>

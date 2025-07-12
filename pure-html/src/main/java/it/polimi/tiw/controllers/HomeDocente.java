@@ -50,7 +50,8 @@ public class HomeDocente extends HttpServlet {
 
 		HttpSession session = request.getSession();
 		Integer codiceDocente = (Integer) session.getAttribute("codice_docente");
-		if (!session.isNew() && codiceDocente != null) {
+		String nomeDocente = (String) session.getAttribute("nome_docente");
+		if (!session.isNew() && codiceDocente != null && nomeDocente != null) {
 			CorsoDAO corsoDAO = new CorsoDAO(connection);
 			try {
 				List<Corso> listaCorsi = corsoDAO.getCorsiByDocente(codiceDocente);
@@ -59,6 +60,7 @@ public class HomeDocente extends HttpServlet {
 				} else {
 					context.setVariable("messaggioListaVuota", "Nessun corso da visualizzare");
 				}
+				context.setVariable("nome", nomeDocente);
 				templateEngine.process("docente/home_docente", context, response.getWriter());
 			} catch (SQLException e) {
 				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Errore nel collegamento al database");

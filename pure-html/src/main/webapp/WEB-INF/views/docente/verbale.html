@@ -1,69 +1,92 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head>
-<meta charset="UTF-8">
-<title>Verbale</title>
+    <meta charset="UTF-8">
+    <title>Verbale</title>
+    <link rel="stylesheet" href="../../../style.css" th:href=@{/style.css}>
 </head>
+
 <body>
-    <div id="top-bar">
-        <a th:href="@{/Verbali}">Indietro</a>
-        <a th:href="@{/Logout}">Logout</a>
-    </div><br>
-    <div id="content">
-        <h3>Verbale</h3>
-        <p th:text="'Codice verbale: ' + ${verbale.getCodiceToString()}">Codice verbale: 123456</p>
-        <p th:text="'Nome corso: ' + ${verbale.getNomeCorso()}">Nome corso: Ingegneria Informatica</p>
-        <p th:text="'Data appello: ' + ${verbale.getDataAppello().toString()}">Data appello: 2023-10-01</p>
-        <p th:text="'Data creazione ' + ${verbale.getDataCreazione().toString()}">Data creazione: 2023-09-15</p>
-        <p th:text="'Ora creazione ' + ${verbale.getOraCreazione().toString()}">Ora creazione: 10:00</p>
-        <h4>Studenti verbalizzati:</h4>
-        <table>
-            <thead>
-                <tr>
-                    <th>Matricola</th>
-                    <th>Nome</th>
-                    <th>Cognome</th>
-                    <th>Email</th>
-                    <th>Corso di laurea</th>
-                    <th>Voto</th>
-                </tr>
-            </thead>
-            <tbody th:remove="all-but-first">
-                <tr th:each="verbalizzatoPair : ${listaVerbalizzatiPair}">
-                    <td th:text="${verbalizzatoPair.getFirst().getMatricolaStudente()}">123456</td>
-                    <td th:text="${verbalizzatoPair.getSecond().getNome()}">Mario</td>
-                    <td th:text="${verbalizzatoPair.getSecond().getCognome()}">Rossi</td>
-                    <td th:text="${verbalizzatoPair.getSecond().getEmail()}">mario.rossi@example.com</td>
-                    <td th:text="${verbalizzatoPair.getSecond().getCorsoLaurea()}">Ingegneria Informatica</td>
-                    <td th:text="${verbalizzatoPair.getFirst().getVoto()}">30</td>
-                </tr>
-                <tr>
-                    <td>654321</td>
-                    <td>Luigi</td>
-                    <td>Bianchi</td>
-                    <td>luigi.bianchi@example.com</td>
-                    <td>Ingegneria Informatica</td>
-                    <td>28</td>
-                </tr>
-                
-                <tr>
-                    <td>789012</td>
-                    <td>Giovanni</td>
-                    <td>Verdi</td>
-                    <td>giovanni.verdi@example.com</td>
-                    <td>Ingegneria Informatica</td>
-                    <td>30</td>
-                </tr>
-                <tr>
-                    <td>345678</td>
-                    <td>Maria</td>
-                    <td>Neri</td>
-                    <td>maria.neri@example.com</td>
-                    <td>Ingegneria Informatica</td>
-                    <td>28</td>
-                </tr>
-            </tbody>
-        </table>
+    <div th:replace="fragments/header::topbar-docente(${nome})">HEADER</div>
+    <div class="wrapper">
+        <span class="back-container">
+            <img class="back-icon" src="../../../imgs/back.png" th:src="@{/imgs/back.png}">
+            <a href=""
+                th:href="@{/Verbali}">Indietro</a>
+        </span>
+        <div class="data-container">
+            <div class="verbale-container">
+                <div>
+                    <span class="data-label">Codice verbale:</span>
+                    <span th:text="${verbale.getCodiceToString()}">123456</span>
+                </div>
+                <div>
+                    <span class="data-label">Data creazione:</span>
+                    <span th:text="${verbale.getDataCreazione().toString()}">2023-09-15</span>
+                </div>
+                <div>
+                    <span class="data-label">Ora creazione:</span>
+                    <span th:text="${verbale.getOraCreazione().toString()}">10:00</span>
+                </div></div>
+            <div class="appello-container">
+                <div>
+                    <span class="data-label">Corso:</span>
+                    <span th:text="${verbale.getNomeCorso()}">Nome del corso</span>
+                </div>
+                <div>
+                    <span class="data-label">Data appello:</span>
+                    <span th:text="${verbale.getDataAppello().toString()}">2023-10-01</span>
+                </div></div>
+            <table class="verbale-table">
+                <thead>
+                    <tr>
+                        <td>Matricola</td>
+                        <td>Nome</td>
+                        <td>Cognome</td>
+                        <td>Email</td>
+                        <td>Corso di laurea</td>
+                        <td>Voto</td>
+                    </tr>
+                </thead>
+                <tbody th:remove="all-but-first">
+                    <tr th:each="verbalizzatoPair : ${listaVerbalizzatiPair}">
+                        <td th:text="${verbalizzatoPair.getFirst().getMatricolaStudente()}">123456</td>
+                        <td th:text="${verbalizzatoPair.getSecond().getNome()}">Mario</td>
+                        <td th:text="${verbalizzatoPair.getSecond().getCognome()}">Rossi</td>
+                        <td th:text="${verbalizzatoPair.getSecond().getEmail()}">mario.rossi@example.com</td>
+                        <td th:text="${verbalizzatoPair.getSecond().getCorsoLaurea()}">Ingegneria Informatica</td>
+                        <td th:text="${verbalizzatoPair.getFirst().getVoto()}">30</td>
+                    </tr>
+                    <tr>
+                        <td>654321</td>
+                        <td>Luigi</td>
+                        <td>Bianchi</td>
+                        <td>luigi.bianchi@example.com</td>
+                        <td>Ingegneria Informatica</td>
+                        <td>28</td>
+                    </tr>
+
+                    <tr>
+                        <td>789012</td>
+                        <td>Giovanni</td>
+                        <td>Verdi</td>
+                        <td>giovanni.verdi@example.com</td>
+                        <td>Ingegneria Informatica</td>
+                        <td>30</td>
+                    </tr>
+                    <tr>
+                        <td>345678</td>
+                        <td>Maria</td>
+                        <td>Neri</td>
+                        <td>maria.neri@example.com</td>
+                        <td>Ingegneria Informatica</td>
+                        <td>28</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 </body>
+
 </html>

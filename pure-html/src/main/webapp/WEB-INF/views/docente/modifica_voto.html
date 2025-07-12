@@ -1,31 +1,68 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head>
-<meta charset="UTF-8">
-<title>Modifica voto</title>
+    <meta charset="UTF-8">
+    <title>Modifica voto</title>
+    <link rel="stylesheet" href="../../../style.css" th:href=@{/style.css}>
 </head>
+
 <body>
-    <div id="top-bar">
-        <a href="@{/Iscritti(nome_corso=${iscrizione.getNomeCorso()}, data_appello=${iscrizione.getDataAppello().toString()}, campo_ordine=start)">Indietro</a>
-        <a href="@{/Logout}">Logout</a>
-    </div><br>
-    <div id="content">
-        <h3>Modifica voto</h3>
-        <form method="post">
-            <p th:text="'Matricola: ' + ${studente.getMatricola()}">Matricola: 123456</p>
-            <p th:text="'Cognome: ' + ${studente.getCognome()}">Cognome: Rossi</p>
-            <p th:text="'Nome: ' + ${studente.getNome()}">Nome: Mario</p>
-            <p th:text="'Email: ' + ${studente.getEmail()}">Email: mario.rossi@example.com</p>
-            <p th:text="'Corso di laurea: ' + ${studente.getCorsoLaurea()}">Corso di laurea: Ingegneria Informatica</p>
-            <label th:text="'Seleziona un voto:'" for="voto">Voto:</label>
-            <select name="voto" required>
-            	<option th:each="voto : ${voti}" th:value="${voto}" th:text="${voto}" th:selected="${voto == iscrizione.getVoto()}">Voto</option>
-            </select>
-            <input type="hidden" th:value="${studente.getMatricola()}" name="matricola">
-            <input type="hidden" th:value="${iscrizione.getNomeCorso()}" name="nome_corso">
-            <input type="hidden" th:value="${iscrizione.getDataAppello().toString()}" name="data_appello">
-            <input type="submit" value="Salva">
-        </form>
-	</div>
+    <div th:replace="fragments/header::topbar-docente(${nome})">HEADER</div>
+    <div class="wrapper">
+    	<span class="back-container">
+			<img class="back-icon" src="../../../imgs/back.png" th:src="@{/imgs/back.png}">
+			<a href="" th:href="@{/Iscritti(nome_corso=${iscrizione.getNomeCorso()}, data_appello=${iscrizione.getDataAppello()}, campo_ordine=start)}">Indietro</a>
+		</span>
+        <div class="data-container">
+            <h3>Modifica voto</h3>
+            <div class="appello-container">
+                <div>
+                    <span class="data-label">Corso:</span>
+                    <span th:text="${iscrizione.getNomeCorso()}">Nome del corso</span>
+                </div>
+                <div>
+                    <span class="data-label">Appello:</span>
+                    <span th:text="${iscrizione.getDataAppello().toString()}">Data dell'appello</span>
+                </div>
+            </div>
+            <div class="studente-container">
+                <div>
+                    <div>
+                        <span class="data-label">Matricola:</span>
+                        <span th:text="${studente.getMatricola()}">123456</span>
+                    </div>
+                    <div>
+                        <span class="data-label">Nome e Cognome:</span>
+                        <span th:text="${studente.getNome()} + ' ' + ${studente.getCognome()}">Mario Rossi</span>
+                    </div>
+                </div>
+                <div>
+                    <div>
+                        <span class="data-label">Email:</span>
+                        <span th:text="${studente.getEmail()}">mario.rossi@example.com</span>
+                    </div>
+                    <div>
+                        <span class="data-label">Corso di laurea:</span>
+                        <span th:text="${studente.getCorsoLaurea()}">Ingegneria Informatica</span>
+                    </div>
+                </div>
+            </div>
+            <form class="form-container" method="post">
+                <div style="display: flex; align-items: center; gap: 1rem;">
+                    <label for="voto" style="font-weight: 600;">Seleziona un voto:</label>
+                    <select name="voto" id="voto" required>
+                        <option th:each="voto : ${voti}" th:value="${voto}" th:text="${voto}"
+                            th:selected="${voto == iscrizione.getVoto()}">Voto</option>
+                    </select>
+                    <input class="action-button" type="submit" value="Salva">
+                </div>
+                <input type="hidden" th:value="${studente.getMatricola()}" name="matricola">
+                <input type="hidden" th:value="${iscrizione.getNomeCorso()}" name="nome_corso">
+                <input type="hidden" th:value="${iscrizione.getDataAppello().toString()}" name="data_appello">
+            </form>
+        </div>
+    </div>
 </body>
+
 </html>

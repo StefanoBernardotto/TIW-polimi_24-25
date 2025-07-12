@@ -54,7 +54,8 @@ public class ModificaVoto extends HttpServlet {
 
 		HttpSession session = request.getSession();
 		Integer codiceDocente = (Integer) session.getAttribute("codice_docente");
-		if(session.isNew() || codiceDocente == null) {
+		String nomeDocente = (String) session.getAttribute("nome_docente");
+		if(session.isNew() || codiceDocente == null || nomeDocente == null) {
 			response.sendRedirect(request.getContextPath() + "/LoginDocente");
 			return;
 		}
@@ -77,7 +78,7 @@ public class ModificaVoto extends HttpServlet {
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Parametri mancanti");
 			return;
 		}
-		
+		context.setVariable("nome", nomeDocente);
 		IscrizioneDAO iscrizioneDAO = new IscrizioneDAO(connection);
 		try {
 			Iscrizione iscrizione = iscrizioneDAO.getDatiIscrizione(matricolaStudente, dataAppello, nomeCorso);

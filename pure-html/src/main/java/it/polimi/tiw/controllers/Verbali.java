@@ -50,11 +50,13 @@ public class Verbali extends HttpServlet {
 
 		HttpSession session = request.getSession();
 		Integer codiceDocente = (Integer) session.getAttribute("codice_docente");
-		if (session.isNew() || codiceDocente == null) {
+		String nomeDocente = (String) session.getAttribute("nome_docente");
+		if (session.isNew() || codiceDocente == null || nomeDocente == null) {
 			response.sendRedirect(request.getContextPath() + "/LoginDocente");
 			return;
 		}
 		
+		context.setVariable("nome", nomeDocente);
 		VerbaleDAO verbaleDAO = new VerbaleDAO(connection);
 		try {
 			List<Verbale> listaVerbali = verbaleDAO.getOrderdVerbaliByDocente(codiceDocente);

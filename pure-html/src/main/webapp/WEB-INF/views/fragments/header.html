@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Fragment - Header</title>
+    <link rel="stylesheet" href="../../../style.css" th:href=@{/style.css}>
+</head>
+
+<body>
+    <div th:fragment="topbar-studente(nome)" class="top-bar">
+        <div class="left">
+            <a href="" th:href="@{/HomeStudente}">Home</a>
+        </div>
+        <div class="right">
+            <span th:text="${nome}">Nome Studente</span>
+            <a href="" th:href="@{/Logout}" class="light-anchor">Logout</a>
+        </div>
+    </div>
+
+
+    <div th:fragment="topbar-docente(nome)" class="top-bar">
+        <div class="left">
+            <a href="" th:href="@{/HomeDocente}">Home</a>
+            <a href="" th:href="@{/Verbali}">Verbali</a>
+        </div>
+        <div class="right">
+            <span th:text="${nome}">Nome Docente</span>
+            <a href="" th:href="@{/Logout}" class="light-anchor">Logout</a>
+        </div>
+
+    </div>
+
+</body>

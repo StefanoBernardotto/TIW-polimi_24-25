@@ -1,20 +1,27 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head>
-<meta charset="UTF-8">
-<title>Login - Docente</title>
+	<meta charset="UTF-8">
+	<link rel="stylesheet" href="../../../style.css" th:href=@{/style.css}>
+	<title>Login - Docente</title>
 </head>
+
 <body>
-	<div id="top-bar">
-		<a th:href="@{/}">Indietro</a>
-	</div><br>
-	<form method="POST">
-		<div th:if="${messaggioErroreLogin != null}" th:text="${messaggioErroreLogin}">Errore<br></div>
-		<label for="matricola">Codice docente:</label>
-		<input type="text" name="codice_docente" required><br>
-		<label for="password">Password:</label>
-		<input type="password" name="password" required><br>
-		<input type="submit" value="Accedi">
-	</form>
+	<div class="wrapper">
+		<span class="back-container">
+			<img class="back-icon" src="../../../imgs/back.png" th:src="@{/imgs/back.png}">
+			<a href="" th:href="@{/}">Indietro</a>
+		</span>
+		<div class="content-container">
+			<span th:if="${messaggioErroreLogin != null}" th:text="${messaggioErroreLogin}">Errore</span>
+			<form class="login-form" method="POST">
+				<input type="text" name="codice_docente" placeholder="Codice docente" required>
+				<input type="password" name="password" placeholder="Password" required>
+				<input type="submit" value="Accedi" class="action-button">
+			</form>
+		</div>
+	</div>
 </body>
+
 </html>

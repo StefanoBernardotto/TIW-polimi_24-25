@@ -51,7 +51,9 @@ public class HomeStudente extends HttpServlet {
 
 		HttpSession session = request.getSession();
 		Integer matricola = (Integer) session.getAttribute("matricola_studente");
-		if (!session.isNew() && matricola != null) {
+		String nomeStudente = (String) session.getAttribute("nome_studente");
+		if (!session.isNew() && matricola != null && nomeStudente != null) {
+			context.setVariable("nome", nomeStudente);
 			CorsoDAO corsoDAO = new CorsoDAO(connection);
 			try {
 				List<Corso> listaCorsi = corsoDAO.getCorsiByStudente(matricola);

@@ -56,11 +56,12 @@ public class Iscritti extends HttpServlet {
 
 		HttpSession session = request.getSession();
 		Integer codiceDocente = (Integer) session.getAttribute("codice_docente");
-		if (session.isNew() || codiceDocente == null) {
+		String nomeDocente = (String) session.getAttribute("nome_docente");
+		if (session.isNew() || codiceDocente == null || nomeDocente == null) {
 			response.sendRedirect(request.getContextPath() + "/LoginDocente");
 			return;
 		}
-
+		
 		String nomeCorso = request.getParameter("nome_corso");
 		Date dataAppello;
 		try {
@@ -77,6 +78,7 @@ public class Iscritti extends HttpServlet {
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Formato parametri errato");
 			return;
 		}
+		context.setVariable("nome", nomeDocente);
 		// Nella sessione viene salvato il campo di ordinamento che verrà utilizzato alla successiva richiesta (dovuta al click su un'intestazione) 
 		String oldCampoOrdine = (String) session.getAttribute("old_campo_ordine");
 		Boolean ord;

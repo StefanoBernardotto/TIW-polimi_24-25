@@ -89,6 +89,7 @@ public class LoginDocente extends HttpServlet {
 			// Credenziali valide
 			HttpSession session = request.getSession();
 			session.setAttribute("codice_docente", d.getCodiceDocente());
+			session.setAttribute("nome_docente", d.getNome() + " " + d.getCognome());
 			response.sendRedirect(request.getContextPath() + "/HomeDocente");
 		} catch (SQLException e) {
 			context.setVariable("messaggioErroreLogin", "Errore durante il login, si prega di riprovare");

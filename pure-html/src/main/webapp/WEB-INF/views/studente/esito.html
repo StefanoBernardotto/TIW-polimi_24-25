@@ -1,38 +1,77 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head>
-<meta charset="UTF-8">
-<title>Esito esame</title>
+	<meta charset="UTF-8">
+	<title>Esito esame</title>
+	<link rel="stylesheet" href="../../../style.css" th:href=@{/style.css}>
 </head>
+
 <body>
-	<div id="top-bar">
-		<a th:href="@{/AppelliStudente(nomeCorso=${nome_corso})}">Indietro</a>
-		<a th:href="@{/Logout}">Logout</a>
-	</div>
-	<br>
-	<div id="content">
-		<h4 th:if="${messaggioNoEsito} != null" th:text="${messaggioNoEsito}">Esito non pubblicato</h4>
-		<div th:unless="${messaggioNoEsito} != null">
-			<form>
-				<label th:text="'Nome: ' + ${studente.getNome()} + ' ' + ${studente.getCognome()}">Nome studente: Mario Rossi</label><br> 
-				<label th:text="'Matricola: ' + ${iscrizione.getMatricolaStudente()}">Matricola: 123456</label><br> 
-				<label th:text="'Email: ' + ${studente.getEmail()}">Email: mario.rossi@example.com</label><br> 
-				<label th:text="'Corso di laurea: ' + ${studente.getCorsoLaurea()}">Corso di laurea: Ingegneria Informatica</label><br>
-				<label th:text="'Corso: ' + ${iscrizione.getNomeCorso()}">Corso: Programmazione Web</label><br>
-				<label th:text="'Data appello: ' + ${iscrizione.getDataAppello().toString()}">Data appello: 2023-10-01</label><br>
-				<label th:text="'Voto: ' + ${iscrizione.getVoto()}">Voto: 30</label><br>
-				<label th:text="'Stato di pubblicazione: ' + ${iscrizione.getStatoPubblicazione()}">Stato di pubblicazione: Pubblicato/Verbalizzato</label><br>
-			</form>
-			<form th:if="!${verbalizzato}" method="post">
-				<input type="hidden" name="rifiuta_voto" value="rifiuta_voto">
-				<input type="hidden" name="nomeCorso" th:value="${iscrizione.getNomeCorso()}">
-				<input type="hidden" name="dataAppello" th:value="${iscrizione.getDataAppello().toString()}">
-				<input type="submit" th:if="!${rifiutato}" value="Rifiuta">
-				<h4 th:unless="!${rifiutato}" th:text="'Il voto è stato rifiutato'">Voto rifiutato</h4>
-			</form>
-			<h4 th:unless="!${verbalizzato}" th:text="'Il voto è stato verbalizzato'">Voto verbalizzato</h4>
-			
+	<div th:replace="fragments/header::topbar-studente(${nome})">HEADER</div>
+	<div class="wrapper">
+		<span class="back-container">
+			<img class="back-icon" src="../../../imgs/back.png" th:src="@{/imgs/back.png}">
+			<a href="" th:href="@{/AppelliStudente(nomeCorso=${nome_corso})}">Indietro</a>
+		</span>
+		<div class="data-container">
+			<h3 th:if="${messaggioNoEsito} != null" th:text="${messaggioNoEsito}">Esito non pubblicato</h3>
+			<div th:unless="${messaggioNoEsito} != null">
+				<div class="studente-container">
+					<div>
+						<div>
+							<span class="data-label">Matricola:</span>
+							<span th:text="${studente.getMatricola()}">123456</span>
+						</div>
+						<div>
+							<span class="data-label">Nome e Cognome:</span>
+							<span th:text="${studente.getNome()} + ' ' + ${studente.getCognome()}">Mario Rossi</span>
+						</div>
+					</div>
+					<div>
+						<div>
+							<span class="data-label">Email:</span>
+							<span th:text="${studente.getEmail()}">mario.rossi@example.com</span>
+						</div>
+						<div>
+							<span class="data-label">Corso di laurea:</span>
+							<span th:text="${studente.getCorsoLaurea()}">Ingegneria Informatica</span>
+						</div>
+					</div>
+				</div>
+				<div class="appello-container">
+					<div>
+						<span class="data-label">Corso:</span>
+						<span th:text="${iscrizione.getNomeCorso()}">Nome del corso</span>
+					</div>
+					<div>
+						<span class="data-label">Appello:</span>
+						<span th:text="${iscrizione.getDataAppello().toString()}">Data dell'appello</span>
+					</div>
+				</div>
+				<div class="voto-container">
+					<div>
+						<span class="data-label">Voto:</span>
+						<span th:text="${iscrizione.getVoto()}">30</span>
+					</div>
+					<div>
+						<span class="data-label">Stato di pubblicazione:</span>
+						<span th:text="${iscrizione.getStatoPubblicazione()}">Pubblicato/Verbalizzato</span>
+					</div>
+					<form th:if="!${verbalizzato}" method="post">
+						<input type="hidden" name="rifiuta_voto" value="rifiuta_voto">
+						<input type="hidden" name="nomeCorso" th:value="${iscrizione.getNomeCorso()}">
+						<input type="hidden" name="dataAppello" th:value="${iscrizione.getDataAppello().toString()}">
+						<input type="submit" th:if="!${rifiutato}" value="Rifiuta" class="action-button rifiuta-button">
+						<span class="data-label" th:unless="!${rifiutato}" th:text="'Rifiutato'">Voto rifiutato</span>
+					</form>
+					<span class="data-label" th:unless="!${verbalizzato}" th:text="'Il voto è stato verbalizzato'">Voto verbalizzato</span>
+				</div>
+				
+
+			</div>
 		</div>
 	</div>
 </body>
+
 </html>

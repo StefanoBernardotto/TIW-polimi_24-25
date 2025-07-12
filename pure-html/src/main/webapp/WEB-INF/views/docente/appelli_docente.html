@@ -1,38 +1,42 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-<meta charset="UTF-8">
-<title>Appelli - Studente</title>
-</head>
-<body>
-	<div id="top-bar">
-		<a th:href="@{/HomeDocente}">Indietro</a>
-		<a th:href="@{/Logout}">Logout</a>
-	</div>
-	<br>
-	<div id="ko-content-appelli" th:if="${messaggioListaVuota} != null"
-		th:text="${messaggioListaVuota}">Lista vuota</div>
-	<div id="ok-content-appelli" th:unless="${messaggioListaVuota} != null">
-		<h3>Appelli del corso:</h3>
-		<table>
-			<thead>
-				<tr>
-					<th>Data</th>
-				</tr>
-			</thead>
-			<tbody th:remove="all-but-first">
-				<tr th:each="appello : ${listaAppelli}">
-					<td><a th:href="@{/Iscritti(nome_corso=${appello.getNomeCorso()}, data_appello=${appello.getDataString()}, campo_ordine=start)}" th:text="${appello.getData()}">2023-03-29</a></td>				
-				</tr>
-				<tr>
-					<td><a>2023-01-29</a></td>
-				</tr>
-				<tr>
-					<td><a>2023-02-05</a></td>
-				</tr>
-			</tbody>
 
-		</table>
+<head>
+	<meta charset="UTF-8">
+	<title>Appelli - Docente</title>
+	<link rel="stylesheet" href="../../../style.css" th:href=@{/style.css}>
+</head>
+
+<body>
+	<div th:replace="fragments/header::topbar-docente(${nome})">HEADER</div>
+	<div class="wrapper">
+		<span class="back-container">
+			<img class="back-icon" src="../../../imgs/back.png" th:src="@{/imgs/back.png}">
+			<a href="" th:href="@{/HomeDocente}">Indietro</a>
+		</span>
+		<div class="content-container">
+			<div class="no-content-message" th:if="${messaggioListaVuota} != null" th:text="${messaggioListaVuota}">
+				Lista vuota</div>
+			<div class="content" th:unless="${messaggioListaVuota} != null">
+				<h3>Appelli del corso:</h3>
+				<table class="appelli-table">
+					<tbody th:remove="all-but-first">
+						<tr th:each="appello : ${listaAppelli}">
+							<td><a th:href="@{/Iscritti(nome_corso=${appello.getNomeCorso()}, data_appello=${appello.getDataString()}, campo_ordine=start)}"
+									th:text="${appello.getData()}">2023-03-29</a></td>
+						</tr>
+						<tr>
+							<td><a>2023-01-29</a></td>
+						</tr>
+						<tr>
+							<td><a>2023-02-05</a></td>
+						</tr>
+					</tbody>
+
+				</table>
+			</div>
+		</div>
 	</div>
 </body>
+
 </html>

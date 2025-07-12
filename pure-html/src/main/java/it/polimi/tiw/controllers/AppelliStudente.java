@@ -51,7 +51,8 @@ public class AppelliStudente extends HttpServlet {
 
 		HttpSession session = request.getSession();
 		Integer matricola = (Integer) session.getAttribute("matricola_studente");
-		if (session.isNew() || matricola == null) {
+		String nomeStudente = (String) session.getAttribute("nome_studente");
+		if (session.isNew() || matricola == null || nomeStudente == null) {
 			response.sendRedirect(request.getContextPath() + "/LoginStudente");
 			return;
 		}
@@ -61,7 +62,8 @@ public class AppelliStudente extends HttpServlet {
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Parametro mancante");
 			return;
 		}
-
+		
+		context.setVariable("nome", nomeStudente);
 		AppelloDAO appelloDAO = new AppelloDAO(connection);
 		try {
 			List<Appello> listaAppelli = appelloDAO.getAppelliByCorso(nomeCorso);

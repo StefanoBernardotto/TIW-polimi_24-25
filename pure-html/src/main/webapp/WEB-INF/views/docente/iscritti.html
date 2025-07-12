@@ -1,79 +1,105 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head>
-<meta charset="UTF-8">
-<title>Iscritti</title>
+	<meta charset="UTF-8">
+	<title>Iscritti</title>
+	<link rel="stylesheet" href="../../../style.css" th:href=@{/style.css}>
 </head>
+
 <body>
-	<div id="top-bar">
-		<a th:href="@{/AppelliDocente(nomeCorso=${nomeCorso})}">Indietro</a>
-		<a th:href="@{/Logout}">Logout</a>
+	<div th:replace="fragments/header::topbar-docente(${nome})">HEADER</div>
+	<div class="wrapper">
+		<span class="back-container">
+			<img class="back-icon" src="../../../imgs/back.png" th:src="@{/imgs/back.png}">
+			<a href="" th:href="@{/AppelliDocente(nomeCorso=${nomeCorso})}">Indietro</a>
+		</span>
+		<div class="content-container">
+			<div class="content" th:if="${listaIscritti.size>0}" id="content">
+				<h3>Iscritti all'appello:</h3>
+				<table class="iscritti-table">
+					<thead>
+						<tr>
+							<td><a
+									th:href="@{/Iscritti(nome_corso=${nomeCorso}, data_appello=${dataAppello}, campo_ordine=matricola)}">Matricola</a>
+							</td>
+							<td><a
+									th:href="@{/Iscritti(nome_corso=${nomeCorso}, data_appello=${dataAppello}, campo_ordine=cognome)}">Cognome</a>
+							</td>
+							<td><a
+									th:href="@{/Iscritti(nome_corso=${nomeCorso}, data_appello=${dataAppello}, campo_ordine=nome)}">Nome</a>
+							</td>
+							<td><a
+									th:href="@{/Iscritti(nome_corso=${nomeCorso}, data_appello=${dataAppello}, campo_ordine=email)}">Email</a>
+							</td>
+							<td><a
+									th:href="@{/Iscritti(nome_corso=${nomeCorso}, data_appello=${dataAppello}, campo_ordine=corso_laurea)}">Corso
+									di laurea</a></td>
+							<td><a
+									th:href="@{/Iscritti(nome_corso=${nomeCorso}, data_appello=${dataAppello}, campo_ordine=voto)}">Voto</a>
+							</td>
+							<td><a
+									th:href="@{/Iscritti(nome_corso=${nomeCorso}, data_appello=${dataAppello}, campo_ordine=stato_pubblicazione)}">Stato
+									di valutazione</a></td>
+							<td></td>
+						<tr>
+					</thead>
+					<tbody th:remove="all-but-first">
+						<tr th:each="iscrittoPair : ${listaIscritti}">
+							<td th:text="${iscrittoPair.getSecond().getMatricola()}">758493</td>
+							<td th:text="${iscrittoPair.getSecond().getCognome()}">Bernardotto</td>
+							<td th:text="${iscrittoPair.getSecond().getNome()}">Stefano</td>
+							<td th:text="${iscrittoPair.getSecond().getEmail()}">bernard@polimi.it</td>
+							<td th:text="${iscrittoPair.getSecond().getCorsoLaurea()}">Ingengneria informatica</td>
+							<td th:text="${iscrittoPair.getFirst().getVoto()}">30</td>
+							<td th:text="${iscrittoPair.getFirst().getStatoPubblicazione()}">Pubblicato</td>
+							<td><a th:if="${iscrittoPair.getFirst().getStatoPubblicazione() == 'non inserito' or iscrittoPair.getFirst().getStatoPubblicazione() == 'inserito'}"
+									th:href="@{/ModificaVoto(nome_corso=${nomeCorso}, data_appello=${dataAppello}, matricola=${iscrittoPair.getSecond().getMatricola()})}">
+									<img class="edit-icon" src="../../../imgs/edit.png" th:src="@{/imgs/edit.png}">
+								</a></td>
+						</tr>
+						<tr>
+							<td>654321</td>
+							<td>Luigi</td>
+							<td>Bianchi</td>
+							<td>luigi.bianchi@example.com</td>
+							<td>Ingegneria Elettronica</td>
+							<td>28</td>
+							<td>Superato</td>
+							<td><input type="button" value="Modifica"></td>
+						</tr>
+						<tr>
+							<td>789012</td>
+							<td>Giovanni</td>
+							<td>Verdi</td>
+							<td>giovanni.verdi@example.com</td>
+							<td>Ingegneria Meccanica</td>
+							<td>29</td>
+							<td>Superato</td>
+							<td><input type="button" value="Modifica"></td>
+						</tr>
+					</tbody>
+				</table>
+				<br>
+				<div class="btn-box">
+					<form method="post">
+						<input type="hidden" name="nome_corso" value="${nomeCorso}">
+						<input type="hidden" name="data_appello" value="${dataAppello}">
+						<input type="hidden" name="azione" value="pubblica">
+						<input type="submit" value="Pubblica" class="action-button">
+					</form>
+					<form method="post">
+						<input type="hidden" name="nome_corso" value="${nomeCorso}">
+						<input type="hidden" name="data_appello" value="${dataAppello}">
+						<input type="hidden" name="azione" value="verbalizza">
+						<input type="submit" value="Verbalizza" class="action-button">
+					</form>
+				</div>
+			</div>
+			<span class="no-content-message" th:unless="${listaIscritti.size>0}">Nessuno studente iscritto
+				all'appello</span>
+		</div>
 	</div>
-	<br>
-	<div th:if="${listaIscritti.size>0}" id="content">
-		<h3>Iscritti all'appello:</h3>
-		<table>
-			<thead>
-				<tr>
-					<td>Matricola</td>
-					<td>Cognome</td>
-					<td>Nome</td>
-					<td>Email</td>
-					<td>Corso di laurea</td>
-					<td>Voto</td>
-					<td>Stato di valutazione</td>
-					<td></td>
-				<tr>
-			</thead>
-			<tbody th:remove="all-but-first">
-				<tr th:each="iscrittoPair : ${listaIscritti}">
-					<td th:text="${iscrittoPair.getSecond().getMatricola()}">758493</td>
-					<td th:text="${iscrittoPair.getSecond().getCognome()}">Bernardotto</td>
-					<td th:text="${iscrittoPair.getSecond().getNome()}">Stefano</td>
-					<td th:text="${iscrittoPair.getSecond().getEmail()}">bernard@polimi.it</td>
-					<td th:text="${iscrittoPair.getSecond().getCorsoLaurea()}">Ingengneria informatica</td>
-					<td th:text="${iscrittoPair.getFirst().getVoto()}">30</td>
-					<td th:text="${iscrittoPair.getFirst().getStatoPubblicazione()}">Pubblicato</td>
-					<td><a th:if="${iscrittoPair.getFirst().getStatoPubblicazione() == 'non inserito' or iscrittoPair.getFirst().getStatoPubblicazione() == 'inserito'}" 
-						th:href="@{/ModificaVoto(nome_corso=${nomeCorso}, data_appello=${dataAppello}, matricola=${iscrittoPair.getSecond().getMatricola()})}" 
-						th:text="Modifica">Modifica</a></td>
-				</tr>
-				<tr>
-					<td>654321</td>
-					<td>Luigi</td>
-					<td>Bianchi</td>
-					<td>luigi.bianchi@example.com</td>
-					<td>Ingegneria Elettronica</td>
-					<td>28</td>
-					<td>Superato</td>
-					<td><input type="button" value="Modifica"></td>
-				</tr>
-				<tr>
-					<td>789012</td>
-					<td>Giovanni</td>
-					<td>Verdi</td>
-					<td>giovanni.verdi@example.com</td>
-					<td>Ingegneria Meccanica</td>
-					<td>29</td>
-					<td>Superato</td>
-					<td><input type="button" value="Modifica"></td>
-				</tr>
-			</tbody>
-		</table>
-		<br>
-		<form method="post">
-			<input type="hidden" name="nome_corso" value="${nomeCorso}">
-			<input type="hidden" name="data_appello" value="${dataAppello}">
-			<input type="hidden" name="azione" value="pubblica">
-			<input type="submit" value="Pubblica">
-		</form>
-		<form method="post">
-			<input type="hidden" name="nome_corso" value="${nomeCorso}">
-			<input type="hidden" name="data_appello" value="${dataAppello}">
-			<input type="hidden" name="azione" value="verbalizza">
-			<input type="submit" value="Verbalizza">
-		</form>
-	</div>
-	<span th:unless="${listaIscritti.size>0}">Nessuno studente iscritto all'appello</span>
 </body>
+
 </html>

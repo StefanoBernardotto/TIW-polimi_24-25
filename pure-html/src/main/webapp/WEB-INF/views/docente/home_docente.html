@@ -1,40 +1,37 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head>
-<meta charset="UTF-8">
-<title>Home - Docente</title>
+	<meta charset="UTF-8">
+	<title>Home - Docente</title>
+	<link rel="stylesheet" href="../../../style.css" th:href=@{/style.css}>
 </head>
+
 <body>
-	<div id="top-bar">
-		<a th:href="@{/Logout}">Logout</a>
-		<a th:href="@{/Verbali}">Verbali</a>
-	</div>
-	<br>
-	<div id="ko-content" th:if="${messaggioListaVuota} != null" th:text="${messaggioListaVuota}">Lista vuota</div>
-	<div id="ok-content" th:unless="${messaggioListaVuota} != null">
-		<h3>I tuoi corsi</h3>
-		<table>
-			<thead>
-				<tr>
-					<th>Nome corso</th>
-					<th></th>
-				</tr>
-			</thead>
-			<tbody th:remove="all-but-first">
-				<tr th:each="corso : ${listaCorsi}">
-					<td><a th:text="${corso.getNome()}" th:href="@{/AppelliDocente(nomeCorso=${corso.getNome()})}">Corso 1</a></td>
-				</tr>
-				<tr>
-					<td><a href="Appelli_docente.html">Corso 1</a></td>
-				</tr>
-				<tr>
-					<td><a href="Appelli_docente.html">Corso 1</a></td>
-				</tr>
-				<tr>
-					<td><a href="Appelli_docente.html">Corso 1</a></td>
-				</tr>
-			</tbody>
-		</table>
+	<div th:replace="fragments/header::topbar-docente(${nome})">HEADER</div>
+	<div class="content-container">
+		<div class="no-content-message" th:if="${messaggioListaVuota} != null" th:text="${messaggioListaVuota}">Lista vuota</div>
+		<div class="content" th:unless="${messaggioListaVuota} != null">
+			<h3>I tuoi corsi</h3>
+			<table class="corsi-table">
+				<tbody th:remove="all-but-first">
+					<tr th:each="corso : ${listaCorsi}">
+						<td><a href="" th:text="${corso.getNome()}"
+								th:href="@{/AppelliDocente(nomeCorso=${corso.getNome()})}">Corso 1</a></td>
+					</tr>
+					<tr>
+						<td><a href="Appelli_docente.html">Corso 1</a></td>
+					</tr>
+					<tr>
+						<td><a href="Appelli_docente.html">Corso 1</a></td>
+					</tr>
+					<tr>
+						<td><a href="Appelli_docente.html">Corso 1</a></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
 	</div>
 </body>
+
 </html>

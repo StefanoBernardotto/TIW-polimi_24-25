@@ -57,12 +57,14 @@ public class Esito extends HttpServlet {
 
 		HttpSession session = request.getSession();
 		Integer matricolaStudente = (Integer) session.getAttribute("matricola_studente");
-		if (session.isNew() || matricolaStudente == null) {
+		String nomeStudente = (String) session.getAttribute("nome_studente");
+		if (session.isNew() || matricolaStudente == null || nomeStudente == null) {
 			response.sendRedirect(request.getContextPath() + "/LoginStudente");
 			return;
 		}
 
 		String nomeCorso = request.getParameter("nome_corso");
+		context.setVariable("nome", nomeStudente);
 		context.setVariable("nome_corso", nomeCorso);
 		Date data;
 		try {
