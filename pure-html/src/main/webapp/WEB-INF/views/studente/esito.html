@@ -46,7 +46,7 @@
 					</div>
 					<div>
 						<span class="data-label">Appello:</span>
-						<span th:text="${iscrizione.getDataAppello().toString()}">Data dell'appello</span>
+						<span th:text="${#dates.format(iscrizione.getDataAppello(), 'dd/MM/yyyy')}">Data dell'appello</span>
 					</div>
 				</div>
 				<div class="voto-container">

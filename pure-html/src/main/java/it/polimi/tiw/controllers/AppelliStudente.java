@@ -64,6 +64,7 @@ public class AppelliStudente extends HttpServlet {
 		}
 		
 		context.setVariable("nome", nomeStudente);
+		context.setVariable("nomeCorso", nomeCorso);
 		AppelloDAO appelloDAO = new AppelloDAO(connection);
 		try {
 			List<Appello> listaAppelli = appelloDAO.getAppelliByCorso(nomeCorso);

@@ -99,12 +99,18 @@ public class Iscritti extends HttpServlet {
 			ord = false;
 		}
 		context.setVariable("nomeCorso", nomeCorso);
-		context.setVariable("dataAppello", dataAppello.toString());
+		context.setVariable("dataAppello", dataAppello);
 		IscrizioneDAO iscrizioneDAO = new IscrizioneDAO(connection);
 		try {
 			List<Pair<Iscrizione, Studente>> listaIscritti = iscrizioneDAO.getOrderedIscritti(dataAppello,
 					nomeCorso, campoOrdine, ord);
+			boolean daVerbalizzare = listaIscritti.stream()
+					.anyMatch(p -> "pubblicato".equals(p.getFirst().getStatoPubblicazione()));
+			boolean daPubblicare = listaIscritti.stream()
+					.anyMatch(p -> "inserito".equals(p.getFirst().getStatoPubblicazione()));
 			context.setVariable("listaIscritti", listaIscritti);
+			context.setVariable("daPubblicare", daPubblicare);
+			context.setVariable("daVerbalizzare", daVerbalizzare);
 			templateEngine.process("docente/iscritti", context, response.getWriter());
 		} catch (SQLException e) {
 			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Errore nella connessione al database");

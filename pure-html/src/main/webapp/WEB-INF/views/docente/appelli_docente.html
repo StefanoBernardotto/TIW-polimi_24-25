@@ -18,12 +18,12 @@
 			<div class="no-content-message" th:if="${messaggioListaVuota} != null" th:text="${messaggioListaVuota}">
 				Lista vuota</div>
 			<div class="content" th:unless="${messaggioListaVuota} != null">
-				<h3>Appelli del corso:</h3>
+				<h3 th:text="'Appelli del corso: ' + ${nomeCorso}">Appelli del corso:</h3>
 				<table class="appelli-table">
 					<tbody th:remove="all-but-first">
 						<tr th:each="appello : ${listaAppelli}">
 							<td><a th:href="@{/Iscritti(nome_corso=${appello.getNomeCorso()}, data_appello=${appello.getDataString()}, campo_ordine=start)}"
-									th:text="${appello.getData()}">2023-03-29</a></td>
+									th:text="${#dates.format(appello.getData(), 'dd/MM/yyyy')}">2023-03-29</a></td>
 						</tr>
 						<tr>
 							<td><a>2023-01-29</a></td>

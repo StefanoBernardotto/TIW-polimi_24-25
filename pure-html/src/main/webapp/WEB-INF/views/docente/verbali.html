@@ -27,8 +27,8 @@
                     <tr th:each="verbale : ${listaVerbali}">
                         <td th:text="${verbale.getCodiceToString()}">123456</td>
                         <td th:text="${verbale.getNomeCorso()}">Ingegneria Informatica</td>
-                        <td th:text="${verbale.getDataAppello().toString()}">2023-10-01</td>
-                        <td th:text="${verbale.getDataCreazione().toString()}">2023-09-15</td>
+                        <td th:text="${#dates.format(verbale.getDataAppello(), 'dd/MM/yyyy')}">2023-10-01</td>
+                        <td th:text="${#dates.format(verbale.getDataCreazione(), 'dd/MM/yyyy')}">2023-09-15</td>
                         <td th:text="${verbale.getOraCreazione().toString()}">10:00</td>
                         <td><a th:href="@{/Verbale(codice_verbale=${verbale.getCodiceToString()})}">
                                 <img class="goto-icon" src="../../../imgs/goto.png" th:src="@{/imgs/goto.png}">

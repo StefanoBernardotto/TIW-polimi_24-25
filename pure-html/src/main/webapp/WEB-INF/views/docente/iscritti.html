@@ -16,30 +16,30 @@
 		</span>
 		<div class="content-container">
 			<div class="content" th:if="${listaIscritti.size>0}" id="content">
-				<h3>Iscritti all'appello:</h3>
+				<h3 th:text="'Iscritti a ' + ${nomeCorso} + ', appello del ' + ${#dates.format(dataAppello, 'dd/MM/yyyy')}">Iscritti all'appello:</h3>
 				<table class="iscritti-table">
 					<thead>
 						<tr>
 							<td><a
-									th:href="@{/Iscritti(nome_corso=${nomeCorso}, data_appello=${dataAppello}, campo_ordine=matricola)}">Matricola</a>
+									th:href="@{/Iscritti(nome_corso=${nomeCorso}, data_appello=${dataAppello.toString()}, campo_ordine=matricola)}">Matricola</a>
 							</td>
 							<td><a
-									th:href="@{/Iscritti(nome_corso=${nomeCorso}, data_appello=${dataAppello}, campo_ordine=cognome)}">Cognome</a>
+									th:href="@{/Iscritti(nome_corso=${nomeCorso}, data_appello=${dataAppello.toString()}, campo_ordine=cognome)}">Cognome</a>
 							</td>
 							<td><a
-									th:href="@{/Iscritti(nome_corso=${nomeCorso}, data_appello=${dataAppello}, campo_ordine=nome)}">Nome</a>
+									th:href="@{/Iscritti(nome_corso=${nomeCorso}, data_appello=${dataAppello.toString()}, campo_ordine=nome)}">Nome</a>
 							</td>
 							<td><a
-									th:href="@{/Iscritti(nome_corso=${nomeCorso}, data_appello=${dataAppello}, campo_ordine=email)}">Email</a>
+									th:href="@{/Iscritti(nome_corso=${nomeCorso}, data_appello=${dataAppello.toString()}, campo_ordine=email)}">Email</a>
 							</td>
 							<td><a
-									th:href="@{/Iscritti(nome_corso=${nomeCorso}, data_appello=${dataAppello}, campo_ordine=corso_laurea)}">Corso
+									th:href="@{/Iscritti(nome_corso=${nomeCorso}, data_appello=${dataAppello.toString()}, campo_ordine=corso_laurea)}">Corso
 									di laurea</a></td>
 							<td><a
-									th:href="@{/Iscritti(nome_corso=${nomeCorso}, data_appello=${dataAppello}, campo_ordine=voto)}">Voto</a>
+									th:href="@{/Iscritti(nome_corso=${nomeCorso}, data_appello=${dataAppello.toString()}, campo_ordine=voto)}">Voto</a>
 							</td>
 							<td><a
-									th:href="@{/Iscritti(nome_corso=${nomeCorso}, data_appello=${dataAppello}, campo_ordine=stato_pubblicazione)}">Stato
+									th:href="@{/Iscritti(nome_corso=${nomeCorso}, data_appello=${dataAppello.toString()}, campo_ordine=stato_pubblicazione)}">Stato
 									di valutazione</a></td>
 							<td></td>
 						<tr>
@@ -54,7 +54,7 @@
 							<td th:text="${iscrittoPair.getFirst().getVoto()}">30</td>
 							<td th:text="${iscrittoPair.getFirst().getStatoPubblicazione()}">Pubblicato</td>
 							<td><a th:if="${iscrittoPair.getFirst().getStatoPubblicazione() == 'non inserito' or iscrittoPair.getFirst().getStatoPubblicazione() == 'inserito'}"
-									th:href="@{/ModificaVoto(nome_corso=${nomeCorso}, data_appello=${dataAppello}, matricola=${iscrittoPair.getSecond().getMatricola()})}">
+									th:href="@{/ModificaVoto(nome_corso=${nomeCorso}, data_appello=${dataAppello.toString()}, matricola=${iscrittoPair.getSecond().getMatricola()})}">
 									<img class="edit-icon" src="../../../imgs/edit.png" th:src="@{/imgs/edit.png}">
 								</a></td>
 						</tr>
@@ -84,15 +84,15 @@
 				<div class="btn-box">
 					<form method="post">
 						<input type="hidden" name="nome_corso" value="${nomeCorso}">
-						<input type="hidden" name="data_appello" value="${dataAppello}">
+						<input type="hidden" name="data_appello" value="${dataAppello.toString()}">
 						<input type="hidden" name="azione" value="pubblica">
-						<input type="submit" value="Pubblica" class="action-button">
+						<input type="submit" value="Pubblica" class="action-button" th:disabled="${!daPubblicare}">
 					</form>
 					<form method="post">
 						<input type="hidden" name="nome_corso" value="${nomeCorso}">
-						<input type="hidden" name="data_appello" value="${dataAppello}">
+						<input type="hidden" name="data_appello" value="${dataAppello.toString()}">
 						<input type="hidden" name="azione" value="verbalizza">
-						<input type="submit" value="Verbalizza" class="action-button">
+						<input type="submit" value="Verbalizza" class="action-button" th:disabled="${!daVerbalizzare}">
 					</form>
 				</div>
 			</div>

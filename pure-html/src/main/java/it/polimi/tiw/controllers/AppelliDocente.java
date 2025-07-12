@@ -64,6 +64,7 @@ public class AppelliDocente extends HttpServlet {
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Parametro mancante");
 			return;
 		}
+		context.setVariable("nomeCorso", nomeCorso);
 
 		AppelloDAO appelloDAO = new AppelloDAO(connection);
 		try {

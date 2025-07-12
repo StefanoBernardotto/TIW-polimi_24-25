@@ -70,6 +70,12 @@ body {
   box-sizing: border-box;
 }
 
+.content{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 h3 {
   text-align: center;
   margin-bottom: 25px;
@@ -83,6 +89,7 @@ table {
   border-collapse: collapse;
   display: block;
   overflow-y: auto;
+  margin: 0px auto;
 }
 
 .verbali-table {
@@ -147,8 +154,8 @@ table td a:hover {
 }
 
 .edit-icon {
-  height: 20px;
-  width: 20px;
+  height: 1em;
+  width: 1em;
 }
 
 .back-icon {
@@ -187,6 +194,12 @@ table td a:hover {
 
 .rifiuta-button:hover {
   background-color: rgb(201, 112, 112);
+}
+
+.action-button:disabled {
+  background-color: #e0e6f5;
+  color: #a0a8b8;
+  cursor: not-allowed;
 }
 
 .wrapper {
