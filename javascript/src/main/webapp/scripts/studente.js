@@ -28,7 +28,7 @@
 				studente["nome"] + " " + studente["cognome"],
 				document.getElementById("label-nome")
 			);
-			
+
 			buttonIndietro = new ButtonIndietro(
 				document.getElementById("back-anchor")
 			)
@@ -68,9 +68,11 @@
 		}
 		// funzione che simula il refresh della home page
 		this.refreshPage = function() {
+			listaAppelli.reset();
+			esitoEsame.reset();
+			listaCorsi.reset();
 			labelNome.show();
 			buttonIndietro.init();
-			listaCorsi.reset();
 			listaCorsi.show();
 		};
 	}
@@ -82,20 +84,20 @@
 			labelNomeTopBar.textContent = this.nomeCognome;
 		};
 	}
-	
-	function tmpFuncHome(){
-		window.location.href = "home_studente.html";
+
+	function tmpFuncHome() {
+		pageOrchestrator.refreshPage();
 	}
-	function tmpFuncLogin(){
+	function tmpFuncLogin() {
 		window.location.href = "../index.html";
 	}
-	
-	function ButtonIndietro(spanIndietro){
-		this.init = function(){
+
+	function ButtonIndietro(spanIndietro) {
+		this.init = function() {
 			spanIndietro.removeEventListener("click", tmpFuncHome);
 			spanIndietro.addEventListener("click", tmpFuncLogin);
 		}
-		this.evolve = function(){
+		this.evolve = function() {
 			spanIndietro.removeEventListener("click", tmpFuncLogin);
 			spanIndietro.addEventListener("click", tmpFuncHome);
 		}
@@ -249,8 +251,15 @@
 		this.labels = _labels;
 		this.buttonRifiuta = _buttonRifiuta;
 		this.labelNonRifiutabile = _labelNonRifiutabile;
+		let self = this;
+
+		this.buttonRifiuta.addEventListener("click", evt => {
+			self.rifiutaEsito();
+		});
 		// funzione che ottiene l'esito dal server e lo mostra a schermo
 		this.show = function(nomeCorso, dataAppello) {
+			this.nomeCorso = nomeCorso;
+			this.dataAppello = dataAppello;
 			this.wrapper.style.display = "block";
 			buttonIndietro.evolve();
 			makeCall("GET",
@@ -313,27 +322,31 @@
 		}
 		this.reset = function() {
 			this.wrapper.style.display = "none";
+			this.nomeCorso = null;
+			this.dataAppello = null;
+		}
+		this.rifiutaEsito = function() {
+			data = new FormData();
+			data.append("profilo", "studente");
+			data.append("azione", "rifiuta");
+			data.append("nome_corso", self.nomeCorso);
+			data.append("data_appello", self.dataAppello);
+			makeCall("POST", "../EsitoEsame", data, request => {
+				if (request.readyState == XMLHttpRequest.DONE) {
+					if (request.status == 200) {
+						let dataAppello = self.dataAppello;
+						let nomeCorso = self.nomeCorso;
+						self.reset();
+						self.show(nomeCorso, dataAppello);
+					} else if (request.status == 401) {
+						window.location.href = "login_studente.html";
+						window.sessionStorage.removeItem("studente");
+					} else {
+						pageOrchestrator.refreshPage();
+					}
+				}
+			}
+			)
 		}
 	}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }

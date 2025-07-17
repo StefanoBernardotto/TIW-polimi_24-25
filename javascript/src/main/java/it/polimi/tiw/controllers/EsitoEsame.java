@@ -2,6 +2,7 @@ package it.polimi.tiw.controllers;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.UnavailableException;
+import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -27,6 +28,7 @@ import it.polimi.tiw.misc.DatabaseInit;
  * Servlet implementation class EsitoEsame
  */
 @WebServlet("/EsitoEsame")
+@MultipartConfig
 public class EsitoEsame extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private Connection connection;
@@ -95,7 +97,7 @@ public class EsitoEsame extends HttpServlet {
 				return;
 			}
 		}
-		
+
 		Iscrizione iscrizione;
 		try {
 			IscrizioneDAO iscrizioneDAO = new IscrizioneDAO(connection);
@@ -105,7 +107,7 @@ public class EsitoEsame extends HttpServlet {
 			response.getWriter().println("Errore nel server");
 			return;
 		}
-		
+
 		Gson gson = new GsonBuilder().setDateFormat("dd/MM/yyyy").create();
 		String jsonString = gson.toJson(iscrizione);
 		response.setStatus(HttpServletResponse.SC_OK);
@@ -115,13 +117,71 @@ public class EsitoEsame extends HttpServlet {
 	}
 
 	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
-	 *      response)
+	 * Gestione delle richieste POST. In base al profilo specificato verifica se la
+	 * sessione è valida, se sì permette di rifiutare un esito (azione=rifiuta)
+	 * oppure modificare il voto (azione=modifica)
+	 * 
+	 * @param profilo      : deve essere "studente" o "docente"
+	 * @param azione       : deve essere "modifica" o "rifiuta"
+	 * @param nome_corso   : nome del corso
+	 * @param data_appello : data dell'appello richiesto
+	 * @param matricola    : solo per il docente, permette di selezionare lo
+	 *                     studente di cui modificare il voto
 	 */
+	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		doGet(request, response);
+		String profiloString = request.getParameter("profilo");
+		if (!"studente".equals(profiloString) && !"docente".equals(profiloString)) {
+			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+			response.getWriter().println("Parametri mancanti");
+			return;
+		}
+
+		HttpSession session = request.getSession();
+		if (session.isNew() || session.getAttribute(profiloString) == null) {
+			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+			return;
+		}
+
+		String azione = request.getParameter("azione");
+		if ((!"rifiuta".equals(azione) && profiloString.equals("studente"))
+				|| (!"modifica".equals(azione) && profiloString.equals("docente"))) {
+			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+			response.getWriter().println("Parametri errati");
+			return;
+		}
+
+		String nomeCorso = request.getParameter("nome_corso");
+		Date dataAppello;
+		try {
+			java.util.Date tmpDate = new SimpleDateFormat("dd/MM/yyyy").parse(request.getParameter("data_appello"));
+			dataAppello = new Date(tmpDate.getTime());
+		} catch (ParseException e) {
+			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+			response.getWriter().println("Formato data errato");
+			return;
+		}
+		if (nomeCorso == null || dataAppello == null) {
+			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+			response.getWriter().println("Parametri mancanti");
+			return;
+		}
+
+		if (azione.equals("rifiuta")) {
+			IscrizioneDAO iscrizioneDAO = new IscrizioneDAO(connection);
+			Studente studente = (Studente) session.getAttribute("studente");
+			try {
+				iscrizioneDAO.rifiutaEsito(studente.getMatricola(), dataAppello, nomeCorso);
+				response.setStatus(HttpServletResponse.SC_OK);
+			} catch (SQLException e) {
+				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+				response.getWriter().println("Errore nel server");
+				return;
+			}
+		} else {
+
+		}
 	}
 
 }
