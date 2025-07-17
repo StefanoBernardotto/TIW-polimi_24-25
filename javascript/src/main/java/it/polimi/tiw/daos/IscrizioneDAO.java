@@ -25,10 +25,12 @@ public class IscrizioneDAO {
 
 	/**
 	 * Metodo per ottenere i dati dell'iscrizione ad un appello di uno studente
-	 * @param matricola : matricola dello studente
+	 * 
+	 * @param matricola   : matricola dello studente
 	 * @param dataAppello : data dell'appello
-	 * @param nomeCorso : nome del corso
-	 * @return l'unica {@link Iscrizione} che rispetta i parametri passati, {@code null} se non esiste
+	 * @param nomeCorso   : nome del corso
+	 * @return l'unica {@link Iscrizione} che rispetta i parametri passati,
+	 *         {@code null} se non esiste
 	 * @throws SQLException
 	 */
 	public Iscrizione getDatiIscrizione(int matricola, Date dataAppello, String nomeCorso) throws SQLException {
@@ -51,57 +53,64 @@ public class IscrizioneDAO {
 			}
 		}
 	}
-	
+
 	/**
 	 * Metodo per ottenere i dati dell'appello e dello studente per più studenti
-	 * @param nomeCorso : nome del corso
-	 * @param dataAppello : data dell'appello
+	 * 
+	 * @param nomeCorso      : nome del corso
+	 * @param dataAppello    : data dell'appello
 	 * @param listaMatricole : lista di numeri di matricola degli studenti
-	 * @return una lista di tutte e sole le {@link Pair} di {@link Iscrizione} e {@link Studente} relative all'appello del corso e degli 
-	 * studenti selezionati, una lista vuota se non ci sono record che rispettano i parametri
+	 * @return una lista di tutte e sole le {@link Pair} di {@link Iscrizione} e
+	 *         {@link Studente} relative all'appello del corso e degli studenti
+	 *         selezionati, una lista vuota se non ci sono record che rispettano i
+	 *         parametri
 	 * @throws SQLException
 	 */
-	public List<Pair<Iscrizione, Studente>> getDatiIscrizioni(String nomeCorso, Date dataAppello, Integer[] listaMatricole) throws SQLException{
+	public List<Pair<Iscrizione, Studente>> getDatiIscrizioni(String nomeCorso, Date dataAppello,
+			Integer[] listaMatricole) throws SQLException {
 		String queryString = "select matricola_studente as matricola, cognome, nome, email, corso_laurea, voto, stato_pubblicazione "
 				+ "from iscrizioni join studenti on iscrizioni.matricola_studente = studenti.matricola "
 				+ "where iscrizioni.data_appello = ? and iscrizioni.nome_corso = ? and matricola_studente in (";
-		if(listaMatricole.length > 0) {
-			for(int i = 0; i < listaMatricole.length - 1; i++) {
+		if (listaMatricole.length > 0) {
+			for (int i = 0; i < listaMatricole.length - 1; i++) {
 				queryString += "?, ";
 			}
 			queryString += "?);";
-			try(PreparedStatement ps1 = connection.prepareStatement(queryString)){
+			try (PreparedStatement ps1 = connection.prepareStatement(queryString)) {
 				ps1.setDate(1, dataAppello);
 				ps1.setString(2, nomeCorso);
-				for(int i = 0; i < listaMatricole.length; i ++) {
-					ps1.setInt(i+3, listaMatricole[i]);
+				for (int i = 0; i < listaMatricole.length; i++) {
+					ps1.setInt(i + 3, listaMatricole[i]);
 				}
-				try(ResultSet res = ps1.executeQuery()){
-					if(res.isBeforeFirst()) {
+				try (ResultSet res = ps1.executeQuery()) {
+					if (res.isBeforeFirst()) {
 						List<Pair<Iscrizione, Studente>> list = new ArrayList<>();
 						while (res.next()) {
 							Iscrizione iscrizione = new Iscrizione(nomeCorso, dataAppello, res.getInt("matricola"),
 									res.getString("voto"), res.getString("stato_pubblicazione"));
 							Studente studente = new Studente(res.getInt("matricola"), res.getString("nome"),
-									res.getString("cognome"), res.getString("email"), null, res.getString("corso_laurea"));
+									res.getString("cognome"), res.getString("email"), null,
+									res.getString("corso_laurea"));
 							list.add(new Pair<Iscrizione, Studente>(iscrizione, studente));
 						}
 						return list;
-					}else {
+					} else {
 						throw new SQLException("Nessuna riga ottenuta");
 					}
 				}
 			}
-		}else {
+		} else {
 			return Collections.emptyList();
 		}
 	}
 
 	/**
-	 * Metodo per rifutare l'esito di un esame: in pratica imposta lo stato di valutazione a "rifiutato"
-	 * @param matricola : matricola dello studente
+	 * Metodo per rifutare l'esito di un esame: in pratica imposta lo stato di
+	 * valutazione a "rifiutato"
+	 * 
+	 * @param matricola   : matricola dello studente
 	 * @param dataAppello : data dell'appello
-	 * @param nomeCorso : nome del corso
+	 * @param nomeCorso   : nome del corso
 	 * @throws SQLException
 	 */
 	public void rifiutaEsito(int matricola, Date dataAppello, String nomeCorso) throws SQLException {
@@ -115,27 +124,20 @@ public class IscrizioneDAO {
 	}
 
 	/**
-	 * Metodo per ottenere i dati delle iscrizioni e degli studenti per un appello, ordinato secondo {@code campoOrdine} 
-	 * in ordine decrescente se {@code desc == true}, crescente altrimenti
+	 * Metodo per ottenere i dati delle iscrizioni e degli studenti per un appello,
+	 * ordinato in ordine crescente per matricola
+	 * 
 	 * @param dataAppello : data dell'appello
-	 * @param nomeCorso : nome del corso
-	 * @param campoOrdine : campo secondo cui si vuole ordinare (può essere {@code "matricola", "cognome", "nome", "email", "corso_laurea", "voto", "stato_pubblicazione"})
-	 * @param desc : flag per indicare se ordinare in ordine decrescente {@code true} o crescente {@code false}
-	 * @return una lista di tutte e sole le {@link Pair} di {@link Iscrizione} e {@link Studente} iscritti a quell'appello di quel corso, 
-	 * ordinata in ordine decrescente se {@code desc == true}, crescente altrimentim secondo il {@code campoOrdine}
+	 * @param nomeCorso   : nome del corso
+	 * @return una lista di tutte e sole le {@link Pair} di {@link Iscrizione} e
+	 *         {@link Studente} iscritti a quell'appello di quel corso, ordinata in
+	 *         ordine crescente per matricola
 	 * @throws SQLException
 	 */
-	public List<Pair<Iscrizione, Studente>> getOrderedIscritti(Date dataAppello, String nomeCorso,
-			String campoOrdine, boolean desc) throws SQLException {
-		if(!("matricola".equals(campoOrdine) || "cognome".equals(campoOrdine) || "nome".equals(campoOrdine) || "email".equals(campoOrdine)
-				|| "corso_laurea".equals(campoOrdine) || "voto".equals(campoOrdine) || "stato_pubblicazione".equals(campoOrdine))) {
-			throw new SQLException("Il campo di ordinamento non è presente in tabella");
-		}
-		String descString = desc ? "desc" : "asc";
+	public List<Pair<Iscrizione, Studente>> getOrderedIscritti(Date dataAppello, String nomeCorso) throws SQLException {
 		String queryString = "select matricola_studente as matricola, cognome, nome, email, corso_laurea, voto, stato_pubblicazione "
 				+ "from iscrizioni join studenti on iscrizioni.matricola_studente = studenti.matricola "
-				+ "where iscrizioni.data_appello = ? and iscrizioni.nome_corso = ? " + "order by " + campoOrdine + " "
-				+ descString + ";";
+				+ "where iscrizioni.data_appello = ? and iscrizioni.nome_corso = ? " + "order by matricola";
 		List<Pair<Iscrizione, Studente>> list = new ArrayList<>();
 		try (PreparedStatement ps = connection.prepareStatement(queryString)) {
 			ps.setDate(1, dataAppello);
@@ -152,18 +154,16 @@ public class IscrizioneDAO {
 				}
 			}
 		}
-		if (campoOrdine.equals("voto")) {
-			Collections.sort(list, new ComparatoreVoti(desc));
-		}
 		return list;
 	}
 
 	/**
 	 * Metodo per inserire o modificare il voto di un esame per uno studente
+	 * 
 	 * @param matricolaStudente : matricola dello studente
-	 * @param nomeCorso : nome del corso
-	 * @param dataAppello : data dell'appello
-	 * @param nuovoVoto : voto che si vuole inserire
+	 * @param nomeCorso         : nome del corso
+	 * @param dataAppello       : data dell'appello
+	 * @param nuovoVoto         : voto che si vuole inserire
 	 * @throws SQLException
 	 * @throws IllegalArgumentException se il voto non è nella giusta forma
 	 */
@@ -192,30 +192,35 @@ public class IscrizioneDAO {
 		}
 
 	}
-	
+
 	/**
-	 * Metodo per pubblicare i voti: in pratica modifica lo stato di valutazione di tutte le iscrizioni con {@code nomeCorso} e 
-	 * {@code dataAppello} da {@code "inserito"} a {@code "pubblicato"}
-	 * @param nomeCorso : nome del corso
+	 * Metodo per pubblicare i voti: in pratica modifica lo stato di valutazione di
+	 * tutte le iscrizioni con {@code nomeCorso} e {@code dataAppello} da
+	 * {@code "inserito"} a {@code "pubblicato"}
+	 * 
+	 * @param nomeCorso   : nome del corso
 	 * @param dataAppello : data dell'appello
 	 * @throws SQLException
 	 */
 	public void pubblicaVoti(String nomeCorso, Date dataAppello) throws SQLException {
 		String queryString = "update iscrizioni set stato_pubblicazione = 'pubblicato' where stato_pubblicazione = 'inserito' and nome_corso = ? and data_appello = ?;";
-		try(PreparedStatement ps = connection.prepareStatement(queryString)){
+		try (PreparedStatement ps = connection.prepareStatement(queryString)) {
 			ps.setString(1, nomeCorso);
 			ps.setDate(2, dataAppello);
 			ps.executeUpdate();
 		}
 	}
-	
+
 	/**
-	 * Metodo per verbalizzare i voti: in pratica modifica lo stato di valutazione di tutte le iscrizioni con {@code nomeCorso} e 
-	 * {@code dataAppello} da {@code "pubblicato} o {@code "rifiutato"} a {@code "verbalizzato"}, nel caso lo stato fosse {@code "rifiutato"}
-	 * il voto viene modificato in {@code "rimandato"}. Infine crea un {@link Verbale} e inserisce la relazione tra {@link Verbale} e 
-	 * {@link Appello} nel database.
-	 * @param nomeCorso : nome del corso
-	 * @param dataAppello  data dell'appello
+	 * Metodo per verbalizzare i voti: in pratica modifica lo stato di valutazione
+	 * di tutte le iscrizioni con {@code nomeCorso} e {@code dataAppello} da
+	 * {@code "pubblicato} o {@code "rifiutato"} a {@code "verbalizzato"}, nel caso
+	 * lo stato fosse {@code "rifiutato"} il voto viene modificato in
+	 * {@code "rimandato"}. Infine crea un {@link Verbale} e inserisce la relazione
+	 * tra {@link Verbale} e {@link Appello} nel database.
+	 * 
+	 * @param nomeCorso   : nome del corso
+	 * @param dataAppello data dell'appello
 	 * @return il codice {@link UUID} del verbale generato, in formato stringa
 	 * @throws SQLException
 	 */
@@ -248,25 +253,26 @@ public class IscrizioneDAO {
 						try (PreparedStatement ps2 = connection.prepareStatement(queryUpdateIscrizioni)) {
 							ps2.setString(1, nomeCorso);
 							ps2.setDate(2, dataAppello);
-							if(ps2.executeUpdate() != listaVerbalizzazioni.size()) {
+							if (ps2.executeUpdate() != listaVerbalizzazioni.size()) {
 								throw new SQLException("Nessuna riga modificata");
 							}
 							// Creazione e inserimento del verbale
 							String queryInsertVerbale = "insert into verbali (codice, data_creazione, ora_creazione, nome_corso, data_appello) values (?, CURRENT_DATE, CURRENT_TIME, ?, ?)";
-							try(PreparedStatement ps3 = connection.prepareStatement(queryInsertVerbale)){
+							try (PreparedStatement ps3 = connection.prepareStatement(queryInsertVerbale)) {
 								ps3.setString(1, codiceVerbaleString);
 								ps3.setString(2, nomeCorso);
 								ps3.setDate(3, dataAppello);
-								if(ps3.executeUpdate() != 1) {
+								if (ps3.executeUpdate() != 1) {
 									throw new SQLException("Errore d'inserimento");
 								}
 								// Inserimento delle relazioni verbale - studente
 								String queryInsertVerbalizzazioni = "insert into verbalizzazioni (codice_verbale, matricola_studente) values (?, ?);";
-								for(Verbalizzazione verbalizzazione : listaVerbalizzazioni) {
-									try(PreparedStatement ps4 = connection.prepareStatement(queryInsertVerbalizzazioni)){
+								for (Verbalizzazione verbalizzazione : listaVerbalizzazioni) {
+									try (PreparedStatement ps4 = connection
+											.prepareStatement(queryInsertVerbalizzazioni)) {
 										ps4.setString(1, codiceVerbaleString);
 										ps4.setInt(2, verbalizzazione.getMatricolaStudente());
-										if(ps4.executeUpdate() != 1) {
+										if (ps4.executeUpdate() != 1) {
 											throw new SQLException("Errore d'inserimento");
 										}
 									}
@@ -290,6 +296,5 @@ public class IscrizioneDAO {
 			throw e;
 		}
 	}
-	
 
 }

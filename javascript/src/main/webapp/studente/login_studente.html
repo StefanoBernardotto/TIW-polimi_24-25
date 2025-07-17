@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<link rel="stylesheet" href="../style.css">
+	<script src="../scripts/login-studente.js" defer></script>
+	<script src="../scripts/utils.js" defer></script>
+	<title>Login - Studente</title>
+</head>
+
+<body>
+	<div class="wrapper">
+		<span class="back-container">
+			<img class="back-icon" src="../imgs/back.png">
+			<a href="../index.html">Indietro</a>
+		</span>
+		<div class="content-container">
+			<span id="login-error-message"></span>
+			<form id="login-form" class="login-form" method="POST">
+				<input type="text" name="codice" placeholder="Numero di matricola" required>
+				<input type="password" name="password" placeholder="Password" required>
+				<input type="hidden" name="profilo" value="studente">
+				<input type="submit" value="Accedi" class="action-button">
+			</form>
+		</div>
+	</div>
+</body>
+
+</html>

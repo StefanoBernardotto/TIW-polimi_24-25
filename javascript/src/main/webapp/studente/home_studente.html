@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<title>Home - Studente</title>
+	<link rel="stylesheet" href="../style.css">
+	<script src="../scripts/util.js"></script>
+	<script src="../scripts/studente.js" defer></script>
+</head>
+
+<body>
+	<div class="top-bar">
+		<div class="left">
+			<button id="button-home">Home</button>
+		</div>
+		<div class="right">
+			<span id="label-nome"></span>
+			<button id="button-logout" class="light-anchor">Logout</button>
+		</div>
+	</div>
+	<div class="wrapper">
+		<span class="back-container"> <img class="back-icon" src="../imgs/back.png"> <a
+				href="../index.html">Indietro</a>
+		</span>
+		<div class="content-container">
+			<span class="no-content-message" id="no-content-message" style="display: none"></span>
+			<div class="content">
+				<div class="corsi-appelli-container" id="container-corsi-appelli">
+					<div class="corsi-container" id="container-corsi">
+						<h3>I tuoi corsi</h3>
+						<table class="corsi-table" id="table-corsi">
+
+						</table>
+					</div>
+					<div class="appelli-container" id="container-appelli" style="display: none">
+						<h3 id="header-appelli"></h3>
+						<table class="appelli-table" id="table-appelli">
+
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="data-container">
+			<h4 id="header-no-esito" style="display: none">Non iscritto a questo appello</h4>
+			<div id="container-esito" style="display: none">
+				<h3>Esito esame</h3>
+				<div class="appello-container">
+					<div>
+						<span class="data-label">Corso:</span>
+						<span id="label-corso"></span>
+					</div>
+					<div>
+						<span class="data-label">Appello:</span>
+						<span id="label-data"></span>
+					</div>
+				</div>
+				<div class="studente-container">
+					<div>
+						<div>
+							<span class="data-label">Matricola:</span>
+							<span id="label-data"></span>
+						</div>
+						<div>
+							<span class="data-label">Nome e Cognome:</span>
+							<span id="label-nome-cognome-stud"></span>
+						</div>
+					</div>
+					<div>
+						<div>
+							<span class="data-label">Email:</span>
+							<span id="label-email"></span>
+						</div>
+						<div>
+							<span class="data-label">Corso di laurea:</span>
+							<span id="label-corso-laurea"></span>
+						</div>
+					</div>
+				</div>
+				<div class="voto-container">
+					<div>
+						<span class="data-label">Voto:</span>
+						<span id="label-voto"></span>
+					</div>
+					<div>
+						<span class="data-label">Stato di pubblicazione:</span>
+						<span id="label-pubblicazione"></span>
+					</div>
+					<button class="action-button rifiuta-button" id="button-rifiuta">Rifiuta</button>
+					<span class="data-label" id="label-non-rifiutabile" style="display: none"></span>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+
+</html>

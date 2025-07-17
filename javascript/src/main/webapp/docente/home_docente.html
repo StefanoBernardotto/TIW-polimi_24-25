@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<title>Home - Docente</title>
+	<link rel="stylesheet" href="../style.css">
+	<script src="../scripts/util.js"></script>
+	<script src="../scripts/docente.js" defer></script>
+</head>
+
+<body>
+	<div class="top-bar">
+		<div class="left">
+			<button id="button-home">Home</button>
+			<button id="button-verbali">Verbali</button>
+		</div>
+		<div class="right">
+			<span id="label-nome"></span>
+			<button id="button-logout" class="light-anchor">Logout</button>
+		</div>
+	</div>
+	<div class="wrapper">
+		<span class="back-container"> <img class="back-icon" src="../imgs/back.png"> <a
+				href="../index.html">Indietro</a>
+		</span>
+		<div class="content-container">
+			<span class="no-content-message" id="no-content-message" style="display: none"></span>
+			<div class="content">
+				<div class="corsi-appelli-container" id="container-corsi-appelli">
+					<div class="corsi-container" id="container-corsi">
+						<h3>I tuoi corsi</h3>
+						<table class="corsi-table" id="table-corsi">
+
+						</table>
+					</div>
+					<div class="appelli-container" id="container-appelli" style="display: none">
+						<h3 id="header-appelli"></h3>
+						<table class="appelli-table" id="table-appelli">
+
+						</table>
+					</div>
+				</div>
+				<div id="container-iscritti" style="display: none">
+					<h3 id="header-iscritti"></h3>
+					<table id="table-iscritti">
+
+					</table>
+					<div class="btn-box">
+						<button id="button-pubblica" class="action-button">Pubblica</button>
+						<button id="button-verbalizza" class="action-button">Verbalizza</button>
+					</div>
+				</div>
+
+				<div id="container-verbali" style="display: none">
+					<h3 id="header-verbali"></h3>
+					<table id="table-verbali">
+
+					</table>
+				</div>
+			</div>
+		</div>
+		<div class="data-container">
+			<div id="container-modifica" style="display: none">
+				<h3>Modifica voto</h3>
+				<div class="appello-container">
+					<div>
+						<span class="data-label">Corso:</span> <span id="label-corso"></span>
+					</div>
+					<div>
+						<span class="data-label">Appello:</span> <span id="label-data"></span>
+					</div>
+				</div>
+				<div class="studente-container">
+					<div>
+						<div>
+							<span class="data-label">Matricola:</span> <span id="label-data"></span>
+						</div>
+						<div>
+							<span class="data-label">Nome e Cognome:</span> <span id="label-nome-cognome-stud">Mario
+								Rossi</span>
+						</div>
+					</div>
+					<div>
+						<div>
+							<span class="data-label">Email:</span> <span id="label-email"></span>
+						</div>
+						<div>
+							<span class="data-label">Corso di laurea:</span> <span id="label-corso-laurea"></span>
+						</div>
+					</div>
+				</div>
+				<form class="form-container" method="post">
+					<div style="display: flex; align-items: center; gap: 1rem;">
+						<label for="voto" style="font-weight: 600;">Seleziona un
+							voto:</label> <select name="voto" id="select-voto" required>
+
+						</select> <input class="action-button" type="submit" value="Salva">
+					</div>
+				</form>
+			</div>
+			<div id="container-verbale" style="display: none">
+				<div class="verbale-container">
+					<div>
+						<span class="data-label">Codice verbale:</span> <span id="label-codice-verbale"></span>
+					</div>
+					<div>
+						<span class="data-label">Data creazione:</span> <span id="label-data-creaz"></span>
+					</div>
+					<div>
+						<span class="data-label">Ora creazione:</span> <span id="label-ora-creaz"></span>
+					</div>
+				</div>
+				<div class="appello-container">
+					<div>
+						<span class="data-label">Corso:</span> <span id="label-nome-corso"></span>
+					</div>
+					<div>
+						<span class="data-label">Data appello:</span> <span id="label-data-appello">2023-10-01</span>
+					</div>
+				</div>
+				<table class="verbale-table" id="table-verbale">
+					<thead>
+						<tr>
+							<td>Matricola</td>
+							<td>Nome</td>
+							<td>Cognome</td>
+							<td>Email</td>
+							<td>Corso di laurea</td>
+							<td>Voto</td>
+						</tr>
+					</thead>
+				</table>
+			</div>
+		</div>
+	</div>
+</body>
+
+</html>
