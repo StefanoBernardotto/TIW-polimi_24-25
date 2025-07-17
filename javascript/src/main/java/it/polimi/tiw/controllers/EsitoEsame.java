@@ -1,0 +1,127 @@
+package it.polimi.tiw.controllers;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.UnavailableException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.Date;
+import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+import it.polimi.tiw.beans.Iscrizione;
+import it.polimi.tiw.beans.Studente;
+import it.polimi.tiw.daos.IscrizioneDAO;
+import it.polimi.tiw.misc.DatabaseInit;
+
+/**
+ * Servlet implementation class EsitoEsame
+ */
+@WebServlet("/EsitoEsame")
+public class EsitoEsame extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+	private Connection connection;
+
+	@Override
+	public void init() throws UnavailableException {
+		this.connection = DatabaseInit.initDB(getServletContext());
+	}
+
+	/**
+	 * Gestione delle richieste GET. In base al profilo specificato verifica se la
+	 * sessione è valida, se sì permette di ottenere i dati relativi all'appello del
+	 * corso passato per lo studente specificato (o che effettua la richiesta)
+	 * 
+	 * @param profilo      : deve essere "studente" o "docente"
+	 * @param nome_corso   : nome del corso
+	 * @param data_appello : data dell'appello richiesto
+	 * @param matricola    : solo per il docente, permette di selezionare lo
+	 *                     studente di cui avere i dati
+	 */
+	@Override
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		String profiloString = request.getParameter("profilo");
+		if (!"studente".equals(profiloString) && !"docente".equals(profiloString)) {
+			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+			response.getWriter().println("Parametri mancanti");
+			return;
+		}
+
+		HttpSession session = request.getSession();
+		if (session.isNew() || session.getAttribute(profiloString) == null) {
+			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+			return;
+		}
+
+		String nomeCorso = request.getParameter("nome_corso");
+		Date dataAppello;
+		try {
+			java.util.Date tmpDate = new SimpleDateFormat("dd/MM/yyyy").parse(request.getParameter("data_appello"));
+			dataAppello = new Date(tmpDate.getTime());
+		} catch (ParseException e) {
+			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+			response.getWriter().println("Formato data errato");
+			return;
+		}
+		if (nomeCorso == null || dataAppello == null) {
+			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+			response.getWriter().println("Parametri mancanti");
+			return;
+		}
+
+		Integer matricola;
+		if (profiloString.equals("studente")) {
+			Studente studente = (Studente) session.getAttribute("studente");
+			matricola = studente.getMatricola();
+		} else {
+			try {
+				matricola = Integer.parseInt(request.getParameter("matricola"));
+				if (matricola < 100000 || matricola > 999999) {
+					throw new NumberFormatException();
+				}
+			} catch (NumberFormatException e) {
+				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+				response.getWriter().println("Formato matricola errato");
+				return;
+			}
+		}
+		
+		Iscrizione iscrizione;
+		try {
+			IscrizioneDAO iscrizioneDAO = new IscrizioneDAO(connection);
+			iscrizione = iscrizioneDAO.getDatiIscrizione(matricola, dataAppello, nomeCorso);
+		} catch (SQLException e) {
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			response.getWriter().println("Errore nel server");
+			return;
+		}
+		
+		Gson gson = new GsonBuilder().setDateFormat("dd/MM/yyyy").create();
+		String jsonString = gson.toJson(iscrizione);
+		response.setStatus(HttpServletResponse.SC_OK);
+		response.setContentType("application/json");
+		response.setCharacterEncoding("UTF-8");
+		response.getWriter().write(jsonString);
+	}
+
+	/**
+	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
+	 *      response)
+	 */
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		doGet(request, response);
+	}
+
+}

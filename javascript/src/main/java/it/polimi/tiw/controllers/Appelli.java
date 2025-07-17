@@ -69,7 +69,7 @@ public class Appelli extends HttpServlet {
 		try {
 			listaAppelli = appelloDAO.getAppelliByCorso(nomeCorso);
 			
-			Gson gson = new GsonBuilder().create();
+			Gson gson = new GsonBuilder().setDateFormat("dd/MM/yyyy").create();
 			String jsonString = gson.toJson(listaAppelli);
 			response.setStatus(HttpServletResponse.SC_OK);
 			response.setContentType("application/json");
