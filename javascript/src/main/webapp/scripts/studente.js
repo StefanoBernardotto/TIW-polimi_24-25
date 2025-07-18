@@ -3,7 +3,7 @@
  */
 {
 	// Componenti della pagina
-	let labelNome, buttonIndietro, listaCorsi, listaAppelli, esitoEsame;
+	let labelNome, anchorHome, anchorLogout, buttonIndietro, listaCorsi, listaAppelli, esitoEsame, messaggioPopup;
 
 	// Oggetto che contiene lo studente loggato
 	let studente;
@@ -29,9 +29,17 @@
 				document.getElementById("label-nome")
 			);
 
+			anchorLogout = new AnchorLogout(
+				document.getElementById("button-logout")
+			);
+
+			anchorHome = new AnchorHome(
+				document.getElementById("anchor-home")
+			);
+
 			buttonIndietro = new ButtonIndietro(
 				document.getElementById("back-anchor")
-			)
+			);
 
 			listaCorsi = new ListaCorsi(
 				document.getElementById("container-corsi"),
@@ -62,11 +70,19 @@
 					voto: document.getElementById("label-voto"),
 					pubblicazione: document.getElementById("label-pubblicazione")
 				},
-				document.getElementById("button-rifiuta"),
+				document.getElementById("icon-cestino"),
 				document.getElementById("label-non-rifiutabile")
-			)
+			);
+
+			messaggioPopup = new MessaggioPopup(
+				document.getElementById("alert-layer"),
+				document.getElementById("alert-messaggio"),
+				document.getElementById("alert-button-cancella"),
+				document.getElementById("alert-button-conferma")
+			);
 		}
-		// funzione che simula il refresh della home page
+
+		// funzione che esegue il refresh della home page
 		this.refreshPage = function() {
 			listaAppelli.reset();
 			esitoEsame.reset();
@@ -85,22 +101,46 @@
 		};
 	}
 
-	function tmpFuncHome() {
+	// Bottone per tornare alla vista precedente e relative funzioni di callback
+	function goToHomeView() {
 		pageOrchestrator.refreshPage();
 	}
-	function tmpFuncLogin() {
+	function goToLoginPage() {
 		window.location.href = "../index.html";
 	}
 
 	function ButtonIndietro(spanIndietro) {
 		this.init = function() {
-			spanIndietro.removeEventListener("click", tmpFuncHome);
-			spanIndietro.addEventListener("click", tmpFuncLogin);
+			spanIndietro.removeEventListener("click", goToHomeView);
+			spanIndietro.addEventListener("click", goToLoginPage);
 		}
 		this.evolve = function() {
-			spanIndietro.removeEventListener("click", tmpFuncLogin);
-			spanIndietro.addEventListener("click", tmpFuncHome);
+			spanIndietro.removeEventListener("click", goToLoginPage);
+			spanIndietro.addEventListener("click", goToHomeView);
 		}
+	}
+
+	// Anchor per il logout e relativa funzione di logout
+	function AnchorLogout(anchorLogout) {
+		anchorLogout.addEventListener("click", logout, false);
+	}
+
+	function logout() {
+		makeCall("GET", "../Logout", null, request => {
+			if (request.readyState == XMLHttpRequest.DONE) {
+				if (request.status == 200) {
+					window.sessionStorage.removeItem("studente");
+					window.location.href = "../index.html";
+				} else {
+					sendError(request.status, request.responseText);
+				}
+			}
+		})
+	}
+
+	// Anchor per tornare alla home
+	function AnchorHome(anchorHome) {
+		anchorHome.addEventListener("click", goToHomeView, false);
 	}
 
 	// Tabella che mostra l'elenco dei corsi a cui è iscritto lo studente
@@ -109,6 +149,8 @@
 		this.table = _table;
 		this.tableBody = _tableBody;
 		this.labelNoCorsi = _labelNoCorsi;
+
+		// funzione che interroga il server per ottenere la lista dei corsi e mostra la tabella con i corsi
 		this.show = function() {
 			this.container.style.display = "block";
 			makeCall("GET", "../Corsi?profilo=studente", null, request => {
@@ -122,17 +164,17 @@
 						} else {
 							this.updateData(listaCorsi);
 						}
-					} else if (request.status == 401) {
+					} else if (request.status == 401) { // UNAUTHORIZED: utente non verificato
 						window.location.href = "login_studente.html";
 						window.sessionStorage.removeItem("studente");
-					} else {
-						this.container.visibility = "hidden";
-						this.labelNoCorsi.textContent = request.responseText;
-						this.labelNoCorsi.style.visibility = "visible";
+					} else { // Errore nella richiesta o nel server
+						sendError(request.status, request.responseText);
 					}
 				}
 			})
 		};
+
+		// funzione che popola la tabella vera e propria
 		this.updateData = function(listaCorsi) {
 			listaCorsi.forEach(corso => {
 				let row = document.createElement("tr");
@@ -163,6 +205,8 @@
 			this.table.style.visibility = "visible";
 			this.labelNoCorsi.style.visibility = "hidden";
 		};
+
+		// funzione che svuota la tabelle e la nasconde
 		this.reset = function() {
 			this.tableBody.innerHTML = "";
 			this.container.style.display = "none";
@@ -177,13 +221,14 @@
 		this.tableBody = _tableBody;
 		this.labelNoAppelli = _labelNoAppelli;
 		this.nomeCorso = null;
+
 		// funzione che ottiene gli appelli dal server e mostra la tabella
 		this.show = function(nomeCorso) {
 			this.nomeCorso = nomeCorso;
 			this.wrapper.style.display = "block";
 			makeCall("GET", "../Appelli?profilo=studente&nome_corso=" + nomeCorso, null, request => {
 				if (request.readyState == XMLHttpRequest.DONE) {
-					if (request.status == 200) {
+					if (request.status == 200) { // OK: richiesta valida
 						let listaAppelli = JSON.parse(request.responseText);
 						if (listaAppelli.length == 0) {
 							this.labelNoAppelli.textContent = "Nessun appello per il corso";
@@ -192,17 +237,16 @@
 						} else {
 							this.updateData(listaAppelli);
 						}
-					} else if (request.status == 401) {
+					} else if (request.status == 401) { // UNAUTHORIZED: utente non verificato
 						window.location.href = "login_studente.html";
 						window.sessionStorage.removeItem("studente");
-					} else {
-						this.labelNoAppelli.textContent = request.responseText;
-						this.labelNoAppelli.style.visibility = "visible";
-						this.container.style.visibility = "hidden";
+					} else { // Errore nel server o nella richiesta
+						sendError(request.status, request.responseText);
 					}
 				}
 			});
 		};
+		
 		// costruisce la tabella vera e propria con la lista passata
 		this.updateData = function(listaAppelli) {
 			this.container.style.visibility = "visible";
@@ -235,6 +279,7 @@
 				self.tableBody.appendChild(row);
 			})
 		}
+
 		// svuota la tabella e nasconde il componente
 		this.reset = function() {
 			this.nomeCorso = null;
@@ -244,18 +289,34 @@
 	}
 
 	// Form che mostra l'esito dell'esame selezionato
-	function EsitoEsame(_wrapper, _container, _labelNoEsito, _labels, _buttonRifiuta, _labelNonRifiutabile) {
+	function EsitoEsame(_wrapper, _container, _labelNoEsito, _labels, _cestino, _labelNonRifiutabile) {
 		this.wrapper = _wrapper;
 		this.container = _container;
 		this.labelNoEsito = _labelNoEsito;
 		this.labels = _labels;
-		this.buttonRifiuta = _buttonRifiuta;
+		this.cestino = _cestino;
 		this.labelNonRifiutabile = _labelNonRifiutabile;
 		let self = this;
 
-		this.buttonRifiuta.addEventListener("click", evt => {
-			self.rifiutaEsito();
+		// funzioni per abilitare il drag and drop per il rifiuto del voto
+		this.cestino.addEventListener("dragover", evt => {
+			evt.preventDefault();
+			evt.target.classList.add("dragging-over");
 		});
+
+		this.cestino.addEventListener("dragleave", () => {
+			self.cestino.classList.remove("dragging-over");
+		});
+
+		this.cestino.addEventListener("drop", evt => {
+			self.cestino.classList.remove("dragging-over");
+			messaggioPopup.show(
+				"Vuoi davvero rifiutare il voto?",
+				self.rifiutaEsito,
+				null
+			)
+		})
+
 		// funzione che ottiene l'esito dal server e lo mostra a schermo
 		this.show = function(nomeCorso, dataAppello) {
 			this.nomeCorso = nomeCorso;
@@ -266,32 +327,33 @@
 				"../EsitoEsame?profilo=studente" + "&nome_corso=" + nomeCorso + "&data_appello=" + dataAppello,
 				null, request => {
 					if (request.readyState == XMLHttpRequest.DONE) {
-						if (request.status == 200) {
+						if (request.status == 200) { // OK: richiesta valida
 							let iscrizione = JSON.parse(request.responseText);
 							if (iscrizione == null) {
 								this.labelNoEsito.textContent = "Non iscritto all'appello";
 								this.labelNoEsito.style.display = "block";
 								this.container.style.display = "none";
+								this.cestino.style.display = "none";
 							} else if (iscrizione.statoPubblicazione != "pubblicato"
 								&& iscrizione.statoPubblicazione != "verbalizzato"
 								&& iscrizione.statoPubblicazione != "rifiutato") {
 								this.labelNoEsito.textContent = "Esito non ancora pubblicato";
 								this.labelNoEsito.style.display = "block";
 								this.container.style.display = "none";
+								this.cestino.style.display = "none";
 							} else {
 								this.updateForm(iscrizione);
 							}
-						} else if (request.status == 401) {
+						} else if (request.status == 401) { // UNAUTHORIZED: utente non verificato
 							window.location.href = "login_studente.html";
 							window.sessionStorage.removeItem("studente");
-						} else {
-							this.labelNoEsito.textContent = request.responseText;
-							this.labelNoEsito.style.display = "block";
-							this.container.style.display = "none";
+						} else { // Errore nel server o nella richiesta
+							sendError(request.status, request.responseText);
 						}
 					}
 				});
 		}
+
 		// funzione per riempire e mostrare il form vero e proprio
 		this.updateForm = function(iscrizione) {
 			this.container.style.display = "block";
@@ -306,25 +368,31 @@
 			this.labels.pubblicazione.textContent = iscrizione.statoPubblicazione;
 			if (iscrizione.statoPubblicazione == "pubblicato") {
 				// rifiutabile
-				this.buttonRifiuta.style.display = "block";
+				this.cestino.style.display = "block";
 				this.labelNonRifiutabile.style.display = "none";
 			} else if (iscrizione.statoPubblicazione == "rifiutato") {
 				// già rifiutato
-				this.buttonRifiuta.style.display = "none";
+				this.cestino.style.display = "none";
 				this.labelNonRifiutabile.textContent = "Il voto è stato rifiutato";
 				this.labelNonRifiutabile.style.display = "block";
 			} else if (iscrizione.statoPubblicazione = "verbalizzato") {
 				// verbalizzato
-				this.buttonRifiuta.style.display = "none";
+				this.cestino.style.display = "none";
 				this.labelNonRifiutabile.textContent = "Il voto è stato verbalizzato";
 				this.labelNonRifiutabile.style.display = "block";
 			}
 		}
+
+		// funzione che nasconde il form e inizializza gli attributi dell'appello salvato
 		this.reset = function() {
 			this.wrapper.style.display = "none";
+			this.container.style.display = "none";
+			this.cestino.style.display = "none";
 			this.nomeCorso = null;
 			this.dataAppello = null;
 		}
+
+		// funzione per il rifiuto dell'esito: invia la richiesta al server
 		this.rifiutaEsito = function() {
 			data = new FormData();
 			data.append("profilo", "studente");
@@ -333,20 +401,66 @@
 			data.append("data_appello", self.dataAppello);
 			makeCall("POST", "../EsitoEsame", data, request => {
 				if (request.readyState == XMLHttpRequest.DONE) {
-					if (request.status == 200) {
+					if (request.status == 200) { // OK: richiesta valida
 						let dataAppello = self.dataAppello;
 						let nomeCorso = self.nomeCorso;
 						self.reset();
 						self.show(nomeCorso, dataAppello);
-					} else if (request.status == 401) {
+					} else if (request.status == 401) { // UNAUTHORIZED: utente non verificato
 						window.location.href = "login_studente.html";
 						window.sessionStorage.removeItem("studente");
-					} else {
-						pageOrchestrator.refreshPage();
+					} else { // Errore nella richiesta o nel server
+						sendError(request.status, request.responseText);
 					}
 				}
-			}
-			)
+			});
 		}
 	}
+
+	// Alert per il rifiuto del voto
+	function MessaggioPopup(_container, _labelMessaggio, _buttonCancella, _buttonConferma) {
+		this.container = _container;
+		this.labelMessaggio = _labelMessaggio;
+		this.buttonConferma = _buttonConferma;
+		this.buttonCancella = _buttonCancella;
+		let self = this;
+
+		/**
+		 * funzione che mostra il popup di conferma con il messaggio selezionato
+		 * @param messaggio : messaggio da mostrare
+		 * @param onConferma : funzione eseguita in caso di conferma dell'utente
+		 * @param onCancella : funzione eseguita in caso di annullamento dell'utente 
+		 */
+		this.show = function(messaggio, onConferma, onCancella) {
+			self.container.style.display = "flex";
+			self.labelMessaggio.textContent = messaggio;
+			self.buttonConferma.addEventListener("click", () => {
+				self.close();
+				if (onConferma != null) {
+					onConferma();
+				}
+			}, false);
+			self.buttonCancella.addEventListener("click", () => {
+				self.close();
+				if (onCancella != null) {
+					onCancella();
+				}
+			}, false);
+		}
+		
+		// funzione che nasconde il popup
+		this.close = function() {
+			this.container.style.display = "none";
+		}
+	}
+
+
+
+
+
+
+
+
+
+
 }

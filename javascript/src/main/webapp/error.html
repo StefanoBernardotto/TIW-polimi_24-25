@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Error</title>
+</head>
+<body>
+	<h3 id="error-status"></h3>
+	<h5 id="error-msg"></h5>
+	<a href="index.html">Torna al login</a>
+</body>
+<script>
+	document.getElementById("error-status").textContent = "Codice errore: " + window.localStorage.getItem("errorCode");
+	document.getElementById("error-msg").textContent = window.localStorage.getItem("errorMsg");
+	window.localStorage.setItem("errorCode", null);
+	window.localStorage.setItem("errorMsg", null);
+</script>
+</html>

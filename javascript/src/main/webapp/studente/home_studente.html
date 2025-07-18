@@ -12,11 +12,20 @@
 <body>
 	<div class="top-bar">
 		<div class="left">
-			<a href="home_studente.html">Home</a>
+			<a id="anchor-home">Home</a>
 		</div>
 		<div class="right">
 			<span id="label-nome"></span>
 			<button id="button-logout" class="light-anchor">Logout</button>
+		</div>
+	</div>
+	<div id="alert-layer" style="display: none">
+		<div class="alert-box">
+			<span id="alert-messaggio"></span>
+			<div class="alert-btn-box">
+				<button id="alert-button-cancella" class="action-button">Cancella</button>
+				<button id="alert-button-conferma" class="action-button">Conferma</button>
+			</div>
 		</div>
 	</div>
 	<div class="wrapper">
@@ -64,7 +73,7 @@
 			<div class="data-container" id="wrapper-esito" style="display: none">
 				<h4 id="header-no-esito" style="display: none">Non iscritto a
 					questo appello</h4>
-				<div id="container-esito" style="display: none">
+				<div id="container-esito" style="display: none" draggable="true">
 					<h3>Esito esame</h3>
 					<div class="appello-container">
 						<div>
@@ -103,11 +112,13 @@
 							<span class="data-label">Stato di pubblicazione:</span> <span
 								id="label-pubblicazione"></span>
 						</div>
-						<button class="action-button rifiuta-button" id="button-rifiuta">Rifiuta</button>
 						<span class="data-label" id="label-non-rifiutabile"
 							style="display: none"></span>
 					</div>
 				</div>
+				<span class="cestino-container">
+					<img src="../imgs/cestino.png" class="cestino-icon" id="icon-cestino">
+				</span>
 			</div>
 		</div>
 	</div>
