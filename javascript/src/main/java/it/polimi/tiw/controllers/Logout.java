@@ -27,9 +27,6 @@ public class Logout extends HttpServlet {
 			session.invalidate();
 			response.setStatus(HttpServletResponse.SC_OK);
 			return;
-		}else {
-			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-			return;
 		}
 	}
 }
