@@ -1,13 +1,13 @@
-# Presentazione progetto
+# Note per la demo
 
-## Note per la demo
+## Profili interessanti
 
-### Profili interessanti
+### Docente
 
-#### Docenti
+Demetris Hatchman: 20108865, rhzbrgbi.
 
-- Demetris Hatchman: 20108865, rhzbrgbi
+**Corsi senza iscritti**: Nursing appello settembre e Peace... appello giugno
 
-#### Studenti
+### Studente
 
-- Loralyn Vautin: 152033, htrgafqn
+Loralyn Vautin: 152033, htrgafqn

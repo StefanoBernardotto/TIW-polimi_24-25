@@ -12,6 +12,8 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 import com.google.gson.Gson;
@@ -55,8 +57,9 @@ public class Iscritti extends HttpServlet {
 		String nomeCorso = request.getParameter("nome_corso");
 		Date dataAppello;
 		try {
-			dataAppello = Date.valueOf(request.getParameter("data_appello"));
-		} catch (IllegalArgumentException e) {
+			java.util.Date tmpDate = new SimpleDateFormat("dd/MM/yyyy").parse(request.getParameter("data_appello"));
+			dataAppello = new Date(tmpDate.getTime());
+		} catch (ParseException e) {
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 			response.getWriter().println("Formato data errato");
 			return;

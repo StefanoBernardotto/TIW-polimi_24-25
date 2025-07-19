@@ -37,7 +37,7 @@ public class Iscrizione {
 	}
 
 	public String getVoto() {
-		if(voto == null) {
+		if (voto == null) {
 			return "<vuoto>";
 		}
 		return new String(voto);
@@ -54,7 +54,11 @@ public class Iscrizione {
 		} catch (NumberFormatException e) {
 			if (voto == null || voto.equals("assente") || voto.equals("rimandato") || voto.equals("riprovato")
 					|| voto.equals("30 e lode")) {
-				this.voto = voto;
+				if (voto == null) {
+					voto = "<vuoto>";
+				} else {
+					this.voto = voto;
+				}
 			} else {
 				throw new RuntimeException("Voto non valido: " + voto);
 			}
@@ -84,21 +88,23 @@ public class Iscrizione {
 		this.setVoto(voto);
 		this.setStatoPubblicazione(statoPubblicazione);
 	}
-	
+
 	public boolean isPubblicato() {
-		return this.statoPubblicazione.equals("pubblicato") || this.statoPubblicazione.equals("verbalizzato") || this.statoPubblicazione.equals("rifiutato");
+		return this.statoPubblicazione.equals("pubblicato") || this.statoPubblicazione.equals("verbalizzato")
+				|| this.statoPubblicazione.equals("rifiutato");
 	}
-	
+
 	public boolean isRifiutato() {
 		return this.statoPubblicazione.equals("rifiutato");
 	}
-	
+
 	public boolean isVerbalizzato() {
 		return this.statoPubblicazione.equals("verbalizzato");
 	}
-	
+
 	@Override
 	public String toString() {
-		return "Iscrizione : " + this.getNomeCorso() + ", " + this.getDataAppello().toString() + ", " + this.getMatricolaStudente() + ", " + this.getVoto() + ", " + this.getStatoPubblicazione();
+		return "Iscrizione : " + this.getNomeCorso() + ", " + this.getDataAppello().toString() + ", "
+				+ this.getMatricolaStudente() + ", " + this.getVoto() + ", " + this.getStatoPubblicazione();
 	}
 }

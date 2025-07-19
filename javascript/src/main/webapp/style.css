@@ -185,6 +185,10 @@ table td a:hover {
 	width: 1em;
 }
 
+.edit-icon:hover {
+	cursor: pointer;
+}
+
 .back-icon {
 	height: 0.8em;
 	width: 1em;
@@ -213,7 +217,7 @@ table td a:hover {
 	display: flex;
 	justify-content: center;
 	gap: 20px;
-	margin-top: 0;
+	margin-top: 10px;
 }
 
 .action-button {

@@ -2,18 +2,17 @@
 <html>
 
 <head>
-	<meta charset="UTF-8">
-	<title>Home - Docente</title>
-	<link rel="stylesheet" href="../style.css">
-	<script src="../scripts/util.js"></script>
-	<script src="../scripts/docente.js" defer></script>
+<meta charset="UTF-8">
+<title>Home - Docente</title>
+<link rel="stylesheet" href="../style.css">
+<script src="../scripts/utils.js"></script>
+<script src="../scripts/docente.js" defer></script>
 </head>
 
 <body>
 	<div class="top-bar">
 		<div class="left">
-			<button id="button-home">Home</button>
-			<button id="button-verbali">Verbali</button>
+			<a id="anchor-home">Home</a> <a id="anchor-verbali">Verbali</a>
 		</div>
 		<div class="right">
 			<span id="label-nome"></span>
@@ -21,116 +20,112 @@
 		</div>
 	</div>
 	<div class="wrapper">
-		<span class="back-container"> <img class="back-icon" src="../imgs/back.png"> <a
-				href="../index.html">Indietro</a>
-		</span>
+		<div class="back-container">
+			<img class="back-icon" src="../imgs/back.png"> <span
+				id="back-anchor">Indietro</span>
+		</div>
 		<div class="content-container">
-			<span class="no-content-message" id="no-content-message" style="display: none"></span>
+			<span class="no-content-message" id="no-content-message"
+				style="visibility: hidden"></span>
 			<div class="content">
 				<div class="corsi-appelli-container" id="container-corsi-appelli">
 					<div class="corsi-container" id="container-corsi">
 						<h3>I tuoi corsi</h3>
 						<table class="corsi-table" id="table-corsi">
+							<thead>
+								<tr>
+									<td>Nome corso</td>
+									<td>Docente</td>
+									<td></td>
+								</tr>
+							</thead>
+							<tbody id="table-body-corsi">
 
+							</tbody>
 						</table>
 					</div>
-					<div class="appelli-container" id="container-appelli" style="display: none">
-						<h3 id="header-appelli"></h3>
-						<table class="appelli-table" id="table-appelli">
+					<div style="display: none" id="wrapper-appelli"
+						class="wrapper-appelli">
+						<span class="no-content-message" id="label-no-appelli"
+							style="visibility: hidden">Nessun appello per il corso</span>
+						<div class="appelli-container" id="container-appelli"
+							style="visibility: hidden">
+							<h3 id="header-appelli">Appelli del corso</h3>
+							<table class="appelli-table" id="table-appelli">
+								<tbody id="table-body-appelli">
 
-						</table>
+								</tbody>
+							</table>
+						</div>
 					</div>
 				</div>
-				<div id="container-iscritti" style="display: none">
-					<h3 id="header-iscritti"></h3>
-					<table id="table-iscritti">
-
+				<div class="iscritti-container" id="container-iscritti" style="display: none">
+					<h4 id="header-iscritti">Iscritti all'appello</h4>
+					<table class="iscritti-table" id="table-iscritti">
+						<thead>
+							<tr>
+								<td id="th-matricola">Matricola</td>
+								<td id="th-cognome">Cognome</td>
+								<td id="th-nome">Nome</td>
+								<td id="th-email">Email</td>
+								<td id="th-corso-laurea">Corso di laurea</td>
+								<td id="th-voto">Voto</td>
+								<td id="th-pubblicazione">Stato di valutazione</td>
+								<td></td>
+							</tr>
+						</thead>
+						<tbody id="table-body-iscritti">
+						
+						</tbody>
 					</table>
-					<div class="btn-box">
-						<button id="button-pubblica" class="action-button">Pubblica</button>
-						<button id="button-verbalizza" class="action-button">Verbalizza</button>
+					<div class="btn-box" id="button-box">
+						<button class="action-button" id="button-pubblica">Pubblica</button>
+						<button class="action-button" id="button-verbalizza">Verbalizza</button>
+						<button class="action-button" id="button-inserimento-multiplo">Inserimento multiplo</button>
 					</div>
-				</div>
-
-				<div id="container-verbali" style="display: none">
-					<h3 id="header-verbali"></h3>
-					<table id="table-verbali">
-
-					</table>
 				</div>
 			</div>
-		</div>
-		<div class="data-container">
-			<div id="container-modifica" style="display: none">
-				<h3>Modifica voto</h3>
-				<div class="appello-container">
-					<div>
-						<span class="data-label">Corso:</span> <span id="label-corso"></span>
-					</div>
-					<div>
-						<span class="data-label">Appello:</span> <span id="label-data"></span>
-					</div>
-				</div>
-				<div class="studente-container">
-					<div>
+			<div class="data-container" id="wrapper-modifica"
+				style="display: none">
+				<div id="container-modifica" style="display: none">
+					<h3>Modifica voto</h3>
+					<div class="appello-container">
 						<div>
-							<span class="data-label">Matricola:</span> <span id="label-data"></span>
+							<span class="data-label">Corso:</span> <span id="label-corso"></span>
 						</div>
 						<div>
-							<span class="data-label">Nome e Cognome:</span> <span id="label-nome-cognome-stud">Mario
-								Rossi</span>
+							<span class="data-label">Appello:</span> <span id="label-data"></span>
 						</div>
 					</div>
-					<div>
+					<div class="studente-container">
 						<div>
-							<span class="data-label">Email:</span> <span id="label-email"></span>
+							<div>
+								<span class="data-label">Matricola:</span> <span
+									id="label-matricola"></span>
+							</div>
+							<div>
+								<span class="data-label">Nome e Cognome:</span> <span
+									id="label-nome-cognome-stud"></span>
+							</div>
 						</div>
 						<div>
-							<span class="data-label">Corso di laurea:</span> <span id="label-corso-laurea"></span>
+							<div>
+								<span class="data-label">Email:</span> <span id="label-email"></span>
+							</div>
+							<div>
+								<span class="data-label">Corso di laurea:</span> <span
+									id="label-corso-laurea"></span>
+							</div>
 						</div>
 					</div>
-				</div>
-				<form class="form-container" method="post">
-					<div style="display: flex; align-items: center; gap: 1rem;">
-						<label for="voto" style="font-weight: 600;">Seleziona un
-							voto:</label> <select name="voto" id="select-voto" required>
-
-						</select> <input class="action-button" type="submit" value="Salva">
-					</div>
-				</form>
-			</div>
-			<div id="container-verbale" style="display: none">
-				<div class="verbale-container">
-					<div>
-						<span class="data-label">Codice verbale:</span> <span id="label-codice-verbale"></span>
-					</div>
-					<div>
-						<span class="data-label">Data creazione:</span> <span id="label-data-creaz"></span>
-					</div>
-					<div>
-						<span class="data-label">Ora creazione:</span> <span id="label-ora-creaz"></span>
+					<div class="voto-container">
+						<label for="voto" style="font-weight: 600;">Seleziona un voto:</label>
+						<select name="voto" id="select-voto">
+							
+						</select>
+						<button class="action-button" id="button-salva">Salva</button>
 					</div>
 				</div>
-				<div class="appello-container">
-					<div>
-						<span class="data-label">Corso:</span> <span id="label-nome-corso"></span>
-					</div>
-					<div>
-						<span class="data-label">Data appello:</span> <span id="label-data-appello">2023-10-01</span>
-					</div>
-				</div>
-				<table class="verbale-table" id="table-verbale">
-					<thead>
-						<tr>
-							<td>Matricola</td>
-							<td>Nome</td>
-							<td>Cognome</td>
-							<td>Email</td>
-							<td>Corso di laurea</td>
-							<td>Voto</td>
-						</tr>
-					</thead>
-				</table>
 			</div>
 		</div>
 	</div>
