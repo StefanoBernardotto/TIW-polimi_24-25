@@ -126,6 +126,7 @@
 	// questa funzione fa sì che venga ricaricato e mostrato il contenuto della pagina iscritti 
 	// visualizzata in precedenza, funziona solo se il componente non viene resettato
 	function goToIscrittiView() {
+		modificaEsito.reset();
 		listaIscritti.refresh();
 	}
 	function goToVerbaliView() {
@@ -230,9 +231,6 @@
 				let nomeCell = document.createElement("td");
 				nomeCell.textContent = corso.nome;
 				row.appendChild(nomeCell);
-				let docenteCell = document.createElement("td");
-				docenteCell.textContent = corso.nomeCognomeDocente;
-				row.appendChild(docenteCell);
 				let linkCell = document.createElement("td");
 				let anchor = document.createElement("a");
 				anchor.setAttribute("nome_corso", corso.nome);
@@ -376,15 +374,35 @@
 					self.tableBody.appendChild(tr);
 				})
 			});
-		})
+		});
+
+		this.buttons.pubblica.addEventListener("click", () => {
+			self.pubblicaVoti();
+			self.refresh();
+		});
+
+		this.pubblicaVoti = function() {
+			makeCall("POST", "../Iscritti?nome_corso=" + self.nomeCorso + "&data_appello=" + self.dataAppello + "&azione=pubblica", null, request => {
+				if (request.readyState == XMLHttpRequest.DONE) {
+					if (request.status == 200) {
+						
+					} else if (request.status == 401) {
+						window.location.href = "login_docente.html";
+						sessionStorage.removeItem("docente");
+					} else {
+						sendError(request.status, request.responseText)
+					}
+				}
+			})
+		}
 
 
 		// funzione che ottiene la lista degli iscritti e la mostra a schermo
 		this.show = function(nomeCorso, dataAppello) {
 			buttonIndietro.evolve();
-			this.tableBody.innerHTML = "";
-			this.nomeCorso = nomeCorso;
-			this.dataAppello = dataAppello;
+			self.tableBody.innerHTML = "";
+			self.nomeCorso = nomeCorso;
+			self.dataAppello = dataAppello;
 			makeCall("GET", "../Iscritti?nome_corso=" + nomeCorso + "&data_appello=" + dataAppello, null, request => {
 				if (request.readyState == XMLHttpRequest.DONE) {
 					if (request.status == 200) {
@@ -422,7 +440,6 @@
 
 		// funzione che crea e carica la tabella vera e propria
 		this.updateData = function(iscritti) {
-			console.log(iscritti);
 			iscritti.forEach(iscrizione => {
 				let row = document.createElement("tr");
 				let matricolaCell = document.createElement("td");
@@ -450,6 +467,17 @@
 				let linkImage = document.createElement("img");
 				linkImage.src = "../imgs/edit.png"
 				linkImage.className = "edit-icon";
+				linkCell.setAttribute("nome_corso", self.nomeCorso);
+				linkCell.setAttribute("data_appello", self.dataAppello);
+				linkCell.setAttribute("matricola", iscrizione.first.matricolaStudente);
+				linkImage.addEventListener("click", (evt) => {
+					listaIscritti.hide();
+					modificaEsito.show(
+						evt.target.closest("td").getAttribute("nome_corso"),
+						evt.target.closest("td").getAttribute("data_appello"),
+						evt.target.closest("td").getAttribute("matricola")
+					);
+				});
 				linkCell.appendChild(linkImage);
 				row.appendChild(linkCell);
 				self.tableBody.appendChild(row);
@@ -458,23 +486,30 @@
 
 		// funzione che resetta il componente: svuota la tabella e resetta i due campi data e corso
 		this.reset = function() {
-			this.tableBody.innerHTML = "";
-			this.nomeCorso = null;
-			this.dataAppello = null;
-			this.hide();
+			self.tableBody.innerHTML = "";
+			self.nomeCorso = null;
+			self.dataAppello = null;
+			self.hide();
 		}
 
 		// funzione che nasconde temporaneamente il componente
 		this.hide = function() {
-			this.container.style.display = "none";
+			self.container.style.display = "none";
+		}
+
+		// funzione che aggiorna il contenuto con i dati del server utilizzando gli attributi nomeCorso 
+		// e dataAppello già salvati, non funziona dopo reset!!!
+		this.refresh = function() {
+			let nomeTmp = self.nomeCorso, dataTmp = self.dataAppello;
+			self.reset()
+			self.show(nomeTmp, dataTmp);
 		}
 	}
 
 	// Form che mostra l'esito dell'esame selezionato
-	function ModificaEsito(_wrapper, _container, _labelNoEsito, _labels) {
+	function ModificaEsito(_wrapper, _container, _labels) {
 		this.wrapper = _wrapper;
 		this.container = _container;
-		this.labelNoEsito = _labelNoEsito;
 		this.labels = _labels;
 		let self = this;
 
@@ -482,25 +517,22 @@
 		this.show = function(nomeCorso, dataAppello, matricola) {
 			this.nomeCorso = nomeCorso;
 			this.dataAppello = dataAppello;
-			this.wrapper.style.display = "block";
-			buttonIndietro.evolve();
+			buttonIndietro.evolveEsito();
 			makeCall("GET",
-				"../EsitoEsame?profilo=docente" + "&nome_corso=" + nomeCorso + "&data_appello=" + dataAppello,
+				"../EsitoEsame?profilo=docente" + "&nome_corso=" + nomeCorso + "&data_appello=" + dataAppello + "&matricola=" + matricola,
 				null, request => {
 					if (request.readyState == XMLHttpRequest.DONE) {
 						if (request.status == 200) { // OK: richiesta valida
-
-
-
-
-
-
+							let iscrizione = JSON.parse(request.responseText);
+							self.updateForm(iscrizione)
+							this.wrapper.style.display = "block";
 						} else if (request.status == 401) { // UNAUTHORIZED: utente non verificato
 							window.location.href = "login_docente.html";
 							window.sessionStorage.removeItem("docente");
 						} else { // Errore nel server o nella richiesta
 							sendError(request.status, request.responseText);
 						}
+
 					}
 				});
 		}
@@ -508,13 +540,12 @@
 		// funzione per riempire e mostrare il form vero e proprio
 		this.updateForm = function(iscrizione) {
 			this.container.style.display = "block";
-			this.labelNoEsito.style.display = "none";
-			this.labels.corso.textContent = iscrizione.nomeCorso;
-			this.labels.data.textContent = iscrizione.dataAppello;
-			this.labels.matricola.textContent = studente.matricola;
-			this.labels.nomeCognomeStudente.textContent = studente.nome + " " + studente.cognome;
-			this.labels.email.textContent = studente.email;
-			this.labels.corsoLaurea.textContent = studente.corsoLaurea;
+			this.labels.corso.textContent = iscrizione.first.nomeCorso;
+			this.labels.data.textContent = iscrizione.first.dataAppello;
+			this.labels.matricola.textContent = iscrizione.second.matricola;
+			this.labels.nomeCognomeStudente.textContent = iscrizione.second.nome + " " + iscrizione.second.cognome;
+			this.labels.email.textContent = iscrizione.second.email;
+			this.labels.corsoLaurea.textContent = iscrizione.second.corsoLaurea;
 		}
 
 		// funzione che nasconde il form e inizializza gli attributi dell'appello salvato
@@ -525,14 +556,4 @@
 			this.dataAppello = null;
 		}
 	}
-
-
-
-
-
-
-
-
-
-
 }

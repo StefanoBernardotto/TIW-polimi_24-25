@@ -22,7 +22,9 @@ import com.google.gson.GsonBuilder;
 import it.polimi.tiw.beans.Iscrizione;
 import it.polimi.tiw.beans.Studente;
 import it.polimi.tiw.daos.IscrizioneDAO;
+import it.polimi.tiw.daos.StudenteDAO;
 import it.polimi.tiw.misc.DatabaseInit;
+import it.polimi.tiw.misc.Pair;
 
 /**
  * Servlet implementation class EsitoEsame
@@ -109,7 +111,21 @@ public class EsitoEsame extends HttpServlet {
 		}
 
 		Gson gson = new GsonBuilder().setDateFormat("dd/MM/yyyy").create();
-		String jsonString = gson.toJson(iscrizione);
+		String jsonString;
+		if(profiloString.equals("docente")) {
+			StudenteDAO studenteDAO = new StudenteDAO(connection);
+			try {
+				Studente studente = studenteDAO.getStudenteByMatricola(matricola);
+				Pair<Iscrizione, Studente> pair = new Pair<Iscrizione, Studente>(iscrizione, studente);
+				jsonString = gson.toJson(pair);
+			} catch (SQLException e) {
+				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+				response.getWriter().println("Errore nel server");
+				return;
+			}
+		}else {
+			jsonString = gson.toJson(iscrizione);
+		}
 		response.setStatus(HttpServletResponse.SC_OK);
 		response.setContentType("application/json");
 		response.setCharacterEncoding("UTF-8");
