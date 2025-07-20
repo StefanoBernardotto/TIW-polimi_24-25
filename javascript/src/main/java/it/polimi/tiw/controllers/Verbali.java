@@ -21,7 +21,6 @@ import it.polimi.tiw.beans.Docente;
 import it.polimi.tiw.beans.Iscrizione;
 import it.polimi.tiw.beans.Studente;
 import it.polimi.tiw.beans.Verbale;
-import it.polimi.tiw.daos.DocenteDAO;
 import it.polimi.tiw.daos.IscrizioneDAO;
 import it.polimi.tiw.daos.VerbaleDAO;
 import it.polimi.tiw.misc.DatabaseInit;
@@ -69,7 +68,8 @@ public class Verbali extends HttpServlet {
 			}
 		}
 
-		Gson gson = new GsonBuilder().setDateFormat("dd/MM/yyyy").create();
+		Gson gson = new GsonBuilder()
+				.setDateFormat("dd/MM/yyyy").create();
 		String jsonString = "";
 		try {
 			if (codiceVerbale != null) {

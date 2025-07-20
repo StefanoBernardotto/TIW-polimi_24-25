@@ -241,7 +241,6 @@ public class EsitoEsame extends HttpServlet {
 				// Inserimento multiplo
 				try {
 					JsonArray array = (JsonArray) JsonParser.parseString(request.getParameter("multi_voto"));
-					System.out.println(array.toString());
 					Map<Integer, String> mappaVoti = new HashMap<Integer, String>();
 					array.forEach(coppia -> {
 						Integer tmpMat = coppia.getAsJsonObject().get("matricola").getAsInt();
@@ -251,7 +250,6 @@ public class EsitoEsame extends HttpServlet {
 						else
 							throw new IllegalArgumentException();
 					});
-					System.out.println(mappaVoti);
 					IscrizioneDAO iscrizioneDAO = new IscrizioneDAO(connection);
 					iscrizioneDAO.modificaMultipliVoti(nomeCorso, dataAppello, mappaVoti);
 				} catch (JsonParseException e) {
