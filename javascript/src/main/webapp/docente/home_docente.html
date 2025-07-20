@@ -2,11 +2,11 @@
 <html>
 
 <head>
-<meta charset="UTF-8">
-<title>Home - Docente</title>
-<link rel="stylesheet" href="../style.css">
-<script src="../scripts/utils.js"></script>
-<script src="../scripts/docente.js" defer></script>
+	<meta charset="UTF-8">
+	<title>Home - Docente</title>
+	<link rel="stylesheet" href="../style.css">
+	<script src="../scripts/utils.js"></script>
+	<script src="../scripts/docente.js" defer></script>
 </head>
 
 <body>
@@ -19,14 +19,35 @@
 			<button id="button-logout" class="light-anchor">Logout</button>
 		</div>
 	</div>
+	<div id="modal-layer" style="display: none">
+		<div class="modal-window">
+			<table id="modal-table">
+				<thead>
+					<tr>
+						<td>Matricola</td>
+						<td>Cognome</td>
+						<td>Nome</td>
+						<td>Email</td>
+						<td>Corso di laurea</td>
+						<td></td>
+					</tr>
+				</thead>
+				<tbody id="modal-table-body">
+
+				</tbody>
+			</table>
+			<div class="btn-box">
+				<button class="action-button canc-button" id="modal-btn-annulla">Annulla</button>
+				<button class="action-button" id="modal-btn-salva">Salva</button>
+			</div>
+		</div>
+	</div>
 	<div class="wrapper">
 		<div class="back-container">
-			<img class="back-icon" src="../imgs/back.png"> <span
-				id="back-anchor">Indietro</span>
+			<img class="back-icon" src="../imgs/back.png"> <span id="back-anchor">Indietro</span>
 		</div>
 		<div class="content-container">
-			<span class="no-content-message" id="no-content-message"
-				style="visibility: hidden"></span>
+			<span class="no-content-message" id="no-content-message" style="visibility: hidden"></span>
 			<div class="content">
 				<div class="corsi-appelli-container" id="container-corsi-appelli">
 					<div class="corsi-container" id="container-corsi">
@@ -43,12 +64,10 @@
 							</tbody>
 						</table>
 					</div>
-					<div style="display: none" id="wrapper-appelli"
-						class="wrapper-appelli">
-						<span class="no-content-message" id="label-no-appelli"
-							style="visibility: hidden">Nessun appello per il corso</span>
-						<div class="appelli-container" id="container-appelli"
-							style="visibility: hidden">
+					<div style="display: none" id="wrapper-appelli" class="wrapper-appelli">
+						<span class="no-content-message" id="label-no-appelli" style="visibility: hidden">Nessun appello
+							per il corso</span>
+						<div class="appelli-container" id="container-appelli" style="visibility: hidden">
 							<h3 id="header-appelli">Appelli del corso</h3>
 							<table class="appelli-table" id="table-appelli">
 								<tbody id="table-body-appelli">
@@ -58,8 +77,7 @@
 						</div>
 					</div>
 				</div>
-				<div class="iscritti-container" id="container-iscritti"
-					style="display: none">
+				<div class="iscritti-container" id="container-iscritti" style="display: none">
 					<h4 id="header-iscritti">Iscritti all'appello</h4>
 					<table class="iscritti-table" id="table-iscritti">
 						<thead>
@@ -86,8 +104,7 @@
 					</div>
 				</div>
 			</div>
-			<div class="data-container" id="wrapper-modifica"
-				style="display: none">
+			<div class="data-container" id="wrapper-modifica" style="display: none">
 				<div id="container-modifica" style="display: none">
 					<h3>Modifica voto</h3>
 					<div class="appello-container">
@@ -101,8 +118,7 @@
 					<div class="studente-container">
 						<div>
 							<div>
-								<span class="data-label">Matricola:</span> <span
-									id="label-matricola"></span>
+								<span class="data-label">Matricola:</span> <span id="label-matricola"></span>
 							</div>
 							<div>
 								<span class="data-label">Nome e Cognome:</span> <span
@@ -114,8 +130,7 @@
 								<span class="data-label">Email:</span> <span id="label-email"></span>
 							</div>
 							<div>
-								<span class="data-label">Corso di laurea:</span> <span
-									id="label-corso-laurea"></span>
+								<span class="data-label">Corso di laurea:</span> <span id="label-corso-laurea"></span>
 							</div>
 						</div>
 					</div>
@@ -128,20 +143,16 @@
 					</div>
 				</div>
 			</div>
-			<div class="data-container" id="wrapper-verbale"
-				style="display: none">
+			<div class="data-container" id="wrapper-verbale" style="display: none">
 				<div class="verbale-container">
 					<div>
-						<span class="data-label">Codice verbale:</span> <span
-							id="v-label-codice"></span>
+						<span class="data-label">Codice verbale:</span> <span id="v-label-codice"></span>
 					</div>
 					<div>
-						<span class="data-label">Data creazione:</span> <span
-							id="v-label-data-creaz"></span>
+						<span class="data-label">Data creazione:</span> <span id="v-label-data-creaz"></span>
 					</div>
 					<div>
-						<span class="data-label">Ora creazione:</span> <span
-							id="v-label-ora-creaz"></span>
+						<span class="data-label">Ora creazione:</span> <span id="v-label-ora-creaz"></span>
 					</div>
 				</div>
 				<div class="appello-container">
@@ -149,8 +160,7 @@
 						<span class="data-label">Corso:</span> <span id="v-label-corso"></span>
 					</div>
 					<div>
-						<span class="data-label">Data appello:</span> <span
-							id="v-label-data"></span>
+						<span class="data-label">Data appello:</span> <span id="v-label-data"></span>
 					</div>
 				</div>
 				<table class="verbale-table" id="table-verbale">
@@ -183,7 +193,7 @@
 						</tr>
 					</thead>
 					<tbody id="table-body-verbali">
-					
+
 					</tbody>
 				</table>
 			</div>

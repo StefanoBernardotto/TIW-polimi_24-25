@@ -3,7 +3,7 @@
  */
 {
 	// Componenti della pagina
-	let labelNome, anchorHome, anchorLogout, anchorVerbali, buttonIndietro, listaCorsi, listaAppelli, listaIscritti, modificaEsito, listaVerbali, visualizzaVerbale;
+	let labelNome, anchorHome, anchorLogout, anchorVerbali, buttonIndietro, listaCorsi, listaAppelli, listaIscritti, modificaEsito, finestraModale, listaVerbali, visualizzaVerbale;
 
 	// Oggetto che contiene lo studente loggato
 	let docente;
@@ -96,6 +96,14 @@
 				document.getElementById("select-voto"),
 				document.getElementById("button-salva")
 			);
+
+			finestraModale = new FinestraModale(
+				document.getElementById("modal-layer"),
+				document.getElementById("modal-table"),
+				document.getElementById("modal-table-body"),
+				document.getElementById("modal-btn-salva"),
+				document.getElementById("modal-btn-annulla")
+			)
 
 			listaVerbali = new ListaVerbali(
 				document.getElementById("wrapper-verbali"),
@@ -412,7 +420,7 @@
 		});
 
 		this.buttons.inserimento.addEventListener("click", () => {
-
+			finestraModale.show(self.nomeCorso, self.dataAppello, self.tableBody);
 		});
 
 		this.pubblicaVoti = function() {
@@ -448,18 +456,6 @@
 			})
 		}
 
-		this.modificaMultiVoto = function(multiVoto){
-			let data = new FormData();
-			data.append("profilo", "docente");
-			data.append("azione", "modifica");
-			data.append("nome_corso", self.nomeCorso);
-			data.append("data_appello", self.dataAppello);
-			data.append("matricola", "-1");
-
-			data.append("multi_voto", JSON.stringify(multiVoto));
-			makeCall("POST", "../EsitoEsame", data, request => { });
-		}
-
 		// funzione che ottiene la lista degli iscritti e la mostra a schermo
 		this.show = function(nomeCorso, dataAppello) {
 			buttonIndietro.evolve();
@@ -487,6 +483,11 @@
 								this.buttons.verbalizza.style.display = "block";
 							} else {
 								this.buttons.verbalizza.style.display = "none";
+							}
+							if (iscritti.some(iscrizione => iscrizione.first.statoPubblicazione == "non inserito")) {
+								this.buttons.inserimento.style.display = "block";
+							} else {
+								this.buttons.inserimento.style.display = "none";
 							}
 							this.updateData(iscritti);
 						}
@@ -665,6 +666,110 @@
 			this.container.style.display = "none";
 			this.nomeCorso = null;
 			this.dataAppello = null;
+		}
+	}
+
+	// Finestra modale per l'inserimento multiplo
+	function FinestraModale(_layer, _table, _tableBody, _buttonSalva, _buttonAnnulla) {
+		this.layer = _layer;
+		this.table = _table;
+		this.tableBody = _tableBody;
+		this.buttonSalva = _buttonSalva;
+		this.buttonAnnulla = _buttonAnnulla;
+		let self = this;
+
+		this.buttonAnnulla.addEventListener("click", () => {
+			self.reset();
+			listaIscritti.refresh();
+		});
+
+		this.buttonSalva.addEventListener("click", () => {
+			let multiVoto = [];
+			Array.from(self.tableBody.children).forEach(tr => {
+				let matricola = Array.from(tr.children)[0].textContent;
+				let voto = Array.from(
+					Array.from(
+						Array.from(tr.children)[5] // cella contenente la select
+							.children)[0] // select
+						.children) // options
+					.find(opt => opt.selected) // option selezionata
+					.textContent;
+				if (voto != "<vuoto>") {
+					multiVoto.push({
+						matricola: matricola,
+						voto: voto
+					});
+				}
+			});
+			if (multiVoto.length > 0)
+				self.modificaMultiVoto(multiVoto);
+			else {
+				self.reset();
+				listaIscritti.refresh();
+			}
+		});
+
+		// funzione per inviare al server i voti da inserire
+		this.modificaMultiVoto = function(multiVoto) {
+			let data = new FormData();
+			data.append("profilo", "docente");
+			data.append("azione", "modifica");
+			data.append("nome_corso", self.nomeCorso);
+			data.append("data_appello", self.dataAppello);
+			data.append("matricola", "-1");
+			data.append("multi_voto", JSON.stringify(multiVoto));
+			makeCall("POST", "../EsitoEsame", data, request => {
+				if (request.readyState == XMLHttpRequest.DONE) {
+					if (request.status == 200) {
+						self.reset();
+						listaIscritti.refresh();
+					} else if (request.status == 401) { // UNAUTHORIZED: utente non verificato
+						window.location.href = "login_docente.html";
+						window.sessionStorage.removeItem("docente");
+					} else { // Errore nel server o nella richiesta
+						sendError(request.status, request.responseText);
+					}
+				}
+			});
+		}
+
+		// funzione per mostrare la finestra modale
+		this.show = function(nomeCorso, dataAppello, tableBodyOrigine) {
+			this.nomeCorso = nomeCorso;
+			this.dataAppello = dataAppello;
+			listaIscritti.hide();
+			this.layer.style.display = "flex";
+			Array.from(tableBodyOrigine.children)
+				// ottengo solo righe con stato non inserito
+				.filter(tr => Array.from(tr.children)[6].textContent == "non inserito")
+				// per ognuna di esse creo una riga nella nuova tabella con stessi attributi
+				.forEach(tr => {
+					let row = document.createElement("tr");
+					let cells = Array.from(tr.children);
+					for (let i = 0; i < 5; i++) {
+						let cell = document.createElement("td");
+						cell.textContent = cells[i].textContent;
+						row.appendChild(cell);
+					}
+					let selectCell = document.createElement("td");
+					selectCell.textContent = "Voto: ";
+					let select = document.createElement("select");
+					voti.forEach(voto => {
+						let opt = document.createElement("option");
+						if (voto == "<vuoto>")
+							opt.selected = true;
+						opt.textContent = voto;
+						select.appendChild(opt);
+					})
+					selectCell.appendChild(select);
+					row.appendChild(selectCell);
+					this.tableBody.appendChild(row);
+				});
+		}
+
+		this.reset = function() {
+			this.tableBody.innerHTML = "";
+			this.layer.style.display = "none";
 		}
 	}
 

@@ -115,17 +115,21 @@ table {
 	margin: 0px auto;
 }
 
+#modal-table {
+	max-height: 350px;
+}
+
 .verbali-table {
 	margin: auto;
 	max-height: 350px;
 }
 
 .verbale-table {
-	max-height: 250px;
+	max-height: 300px;
 }
 
 .iscritti-table {
-	max-height: 250px;
+	max-height: 300px;
 }
 
 .iscritti-table th:hover {
@@ -242,12 +246,20 @@ table td a:hover {
 	background-color: rgb(233, 130, 130);
 }
 
+.canc-button {
+	background-color: #e0e4f2;
+}
+
 .action-button:hover {
 	background-color: var(--light-blue);
 }
 
 .rifiuta-button:hover {
 	background-color: rgb(201, 112, 112);
+}
+
+.canc-button:hover {
+	background-color: #a8adc0;
 }
 
 .action-button:disabled {
@@ -388,7 +400,7 @@ select {
 	border-radius: 2px;
 }
 
-#alert-layer {
+#alert-layer, #modal-layer {
 	position: fixed;
 	top: 0;
 	left: 0;
@@ -411,4 +423,11 @@ select {
 	display: flex;
 	flex-direction: row;
 	gap: 20px;
+}
+
+.modal-window {
+	background-color: var(--white-blue);
+	margin: 20px auto 0px auto;
+	border-radius: 4px;
+	padding: 30px 50px;
 }
