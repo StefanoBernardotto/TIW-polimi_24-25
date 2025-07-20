@@ -3,7 +3,7 @@
  */
 {
 	// Componenti della pagina
-	let labelNome, anchorHome, anchorLogout, anchorVerbali, buttonIndietro, listaCorsi, listaAppelli, listaIscritti, modificaEsito, listaVerbali, verbale;
+	let labelNome, anchorHome, anchorLogout, anchorVerbali, buttonIndietro, listaCorsi, listaAppelli, listaIscritti, modificaEsito, listaVerbali, visualizzaVerbale;
 
 	// Oggetto che contiene lo studente loggato
 	let docente;
@@ -92,13 +92,36 @@
 					nomeCognomeStudente: document.getElementById("label-nome-cognome-stud"),
 					email: document.getElementById("label-email"),
 					corsoLaurea: document.getElementById("label-corso-laurea")
-				}
+				},
+				document.getElementById("select-voto"),
+				document.getElementById("button-salva")
 			);
+
+			listaVerbali = new ListaVerbali(
+				document.getElementById("wrapper-verbali"),
+				document.getElementById("table-verbali"),
+				document.getElementById("table-body-verbali")
+			)
+
+			visualizzaVerbale = new VisualizzaVerbale(
+				document.getElementById("wrapper-verbale"),
+				document.getElementById("table-verbale"),
+				document.getElementById("table-body-verbale"),
+				{
+					codice: document.getElementById("v-label-codice"),
+					dataCreazione: document.getElementById("v-label-data-creaz"),
+					oraCreazione: document.getElementById("v-label-ora-creaz"),
+					corso: document.getElementById("v-label-corso"),
+					data: document.getElementById("v-label-data")
+				}
+			)
 		}
 
 		// funzione che esegue il refresh della home page
 		this.refreshPage = function() {
 			listaAppelli.reset();
+			listaVerbali.reset();
+			visualizzaVerbale.reset();
 			modificaEsito.reset();
 			listaCorsi.reset();
 			listaIscritti.reset();
@@ -126,12 +149,19 @@
 	// questa funzione fa sì che venga ricaricato e mostrato il contenuto della pagina iscritti 
 	// visualizzata in precedenza, funziona solo se il componente non viene resettato
 	function goToIscrittiView() {
+		visualizzaVerbale.reset();
 		modificaEsito.reset();
 		listaIscritti.refresh();
 	}
 	function goToVerbaliView() {
 		buttonIndietro.evolve();
-		console.error("NOT IMPLEMENTED YET");
+		listaCorsi.reset();
+		listaAppelli.reset();
+		listaIscritti.reset();
+		modificaEsito.reset();
+		visualizzaVerbale.reset();
+		listaVerbali.reset();
+		listaVerbali.show();
 	}
 
 	function ButtonIndietro(spanIndietro) {
@@ -351,13 +381,10 @@
 		let self = this;
 
 		// istruzioni eseguite appena viene creato l'oggetto, inseriscono gli eventlistener sulle header per permettere di ordinare la tabella
-
 		// per ogni header della tabella, inserisco l'evtListener per il click
 		self.tableHeaders.forEach(th => {
 			th.addEventListener("click", () => {
-				// ottengo l'array con le righe della tabella
 				const rows = Array.from(self.table.querySelectorAll("tbody > tr"));
-				// ottengo l'indice della header nell'array di headers
 				let indice = self.tableHeaders.indexOf(th);
 				// aggiorno i valori di impostazione: se il campo è lo stesso del precedente ordinamento, inverto l'ordinamento
 				// altrimenti setto l'ordinamento crescente e imposto l'ultimo campo scelto
@@ -367,9 +394,8 @@
 					self.asc = true;
 					self.indicePrec = indice;
 				}
-				// ordino la tabella con il comparatore in utils.js
+
 				rows.sort(comparatore(indice, self.asc));
-				// aggiungo nel body le righe ordinate
 				rows.forEach(tr => {
 					self.tableBody.appendChild(tr);
 				})
@@ -381,11 +407,19 @@
 			self.refresh();
 		});
 
+		this.buttons.verbalizza.addEventListener("click", () => {
+			self.verbalizzaVoti();
+		});
+
+		this.buttons.inserimento.addEventListener("click", () => {
+
+		});
+
 		this.pubblicaVoti = function() {
 			makeCall("POST", "../Iscritti?nome_corso=" + self.nomeCorso + "&data_appello=" + self.dataAppello + "&azione=pubblica", null, request => {
 				if (request.readyState == XMLHttpRequest.DONE) {
 					if (request.status == 200) {
-						
+
 					} else if (request.status == 401) {
 						window.location.href = "login_docente.html";
 						sessionStorage.removeItem("docente");
@@ -396,6 +430,35 @@
 			})
 		}
 
+		this.verbalizzaVoti = function() {
+			makeCall("POST", "../Iscritti?nome_corso=" + self.nomeCorso + "&data_appello=" + self.dataAppello + "&azione=verbalizza", null, request => {
+				if (request.readyState == XMLHttpRequest.DONE) {
+					if (request.status == 200) {
+						let codiceVerbale = request.responseText;
+						self.hide();
+						buttonIndietro.evolveEsito();
+						visualizzaVerbale.show(codiceVerbale);
+					} else if (request.status == 401) {
+						window.location.href = "login_docente.html";
+						sessionStorage.removeItem("docente");
+					} else {
+						sendError(request.status, request.responseText)
+					}
+				}
+			})
+		}
+
+		this.modificaMultiVoto = function(multiVoto){
+			let data = new FormData();
+			data.append("profilo", "docente");
+			data.append("azione", "modifica");
+			data.append("nome_corso", self.nomeCorso);
+			data.append("data_appello", self.dataAppello);
+			data.append("matricola", "-1");
+
+			data.append("multi_voto", JSON.stringify(multiVoto));
+			makeCall("POST", "../EsitoEsame", data, request => { });
+		}
 
 		// funzione che ottiene la lista degli iscritti e la mostra a schermo
 		this.show = function(nomeCorso, dataAppello) {
@@ -464,21 +527,23 @@
 				pubblicazioneCell.textContent = iscrizione.first.statoPubblicazione;
 				row.appendChild(pubblicazioneCell);
 				let linkCell = document.createElement("td");
-				let linkImage = document.createElement("img");
-				linkImage.src = "../imgs/edit.png"
-				linkImage.className = "edit-icon";
-				linkCell.setAttribute("nome_corso", self.nomeCorso);
-				linkCell.setAttribute("data_appello", self.dataAppello);
-				linkCell.setAttribute("matricola", iscrizione.first.matricolaStudente);
-				linkImage.addEventListener("click", (evt) => {
-					listaIscritti.hide();
-					modificaEsito.show(
-						evt.target.closest("td").getAttribute("nome_corso"),
-						evt.target.closest("td").getAttribute("data_appello"),
-						evt.target.closest("td").getAttribute("matricola")
-					);
-				});
-				linkCell.appendChild(linkImage);
+				if (iscrizione.first.statoPubblicazione == "non inserito" || iscrizione.first.statoPubblicazione == "inserito") {
+					let linkImage = document.createElement("img");
+					linkImage.src = "../imgs/edit.png"
+					linkImage.className = "edit-icon";
+					linkCell.setAttribute("nome_corso", self.nomeCorso);
+					linkCell.setAttribute("data_appello", self.dataAppello);
+					linkCell.setAttribute("matricola", iscrizione.first.matricolaStudente);
+					linkImage.addEventListener("click", (evt) => {
+						listaIscritti.hide();
+						modificaEsito.show(
+							evt.target.closest("td").getAttribute("nome_corso"),
+							evt.target.closest("td").getAttribute("data_appello"),
+							evt.target.closest("td").getAttribute("matricola")
+						);
+					});
+					linkCell.appendChild(linkImage);
+				}
 				row.appendChild(linkCell);
 				self.tableBody.appendChild(row);
 			})
@@ -507,16 +572,60 @@
 	}
 
 	// Form che mostra l'esito dell'esame selezionato
-	function ModificaEsito(_wrapper, _container, _labels) {
+	function ModificaEsito(_wrapper, _container, _labels, _select, _button) {
 		this.wrapper = _wrapper;
 		this.container = _container;
 		this.labels = _labels;
+		this.select = _select;
+		this.button = _button;
 		let self = this;
+
+		// istruzioni che caricano i possibili voti nella select
+		voti.forEach(voto => {
+			if (voto != "<vuoto>") {
+				let opt = document.createElement("option");
+				opt.textContent = voto;
+				this.select.appendChild(opt);
+			}
+		});
+
+		// istruzione per aggiungere l'evt listener al click del bottone per salvare
+		this.button.addEventListener("click", () => {
+			// ottiene il valore dell'opzione selezionata
+			let voto = Array.from(self.select.children).find(opt => opt.selected).textContent;
+			self.modificaVoto(voto);
+		});
+
+		// funzione per comunicare al server la modifica del voto
+		this.modificaVoto = function(voto) {
+			let data = new FormData();
+			data.append("nome_corso", self.nomeCorso);
+			data.append("data_appello", self.dataAppello);
+			data.append("matricola", self.matricola);
+			data.append("voto", voto);
+			data.append("profilo", "docente");
+			data.append("azione", "modifica");
+			makeCall("POST", "../EsitoEsame", data, request => {
+				if (request.readyState == XMLHttpRequest.DONE) {
+					if (request.status == 200) {
+						self.reset();
+						listaIscritti.refresh();
+						buttonIndietro.evolve();
+					} else if (request.status == 401) {
+						window.location.href = "login_docente.html";
+						sessionStorage.removeItem("docente");
+					} else {
+						sendError(request.status, request.responseText)
+					}
+				}
+			})
+		}
 
 		// funzione che ottiene l'esito dal server e lo mostra a schermo
 		this.show = function(nomeCorso, dataAppello, matricola) {
 			this.nomeCorso = nomeCorso;
 			this.dataAppello = dataAppello;
+			this.matricola = matricola;
 			buttonIndietro.evolveEsito();
 			makeCall("GET",
 				"../EsitoEsame?profilo=docente" + "&nome_corso=" + nomeCorso + "&data_appello=" + dataAppello + "&matricola=" + matricola,
@@ -546,6 +655,8 @@
 			this.labels.nomeCognomeStudente.textContent = iscrizione.second.nome + " " + iscrizione.second.cognome;
 			this.labels.email.textContent = iscrizione.second.email;
 			this.labels.corsoLaurea.textContent = iscrizione.second.corsoLaurea;
+			// carica il valore precedente del voto dalla lista di opzioni
+			Array.from(this.select.children).forEach(option => option.selected = option.textContent == iscrizione.first.voto);
 		}
 
 		// funzione che nasconde il form e inizializza gli attributi dell'appello salvato
@@ -556,4 +667,166 @@
 			this.dataAppello = null;
 		}
 	}
+
+	// Form che mostra un verbale
+	function VisualizzaVerbale(_wrapper, _table, _tableBody, _labels) {
+		this.wrapper = _wrapper;
+		this.table = _table;
+		this.tableBody = _tableBody;
+		this.labels = _labels;
+		let self = this;
+
+		// funzione che ottiene i dati del verbale dal server e mostra il verbale ottenuto
+		this.show = function(codice) {
+			makeCall("GET", "../Verbali?codice=" + codice, null, request => {
+				if (request.readyState == XMLHttpRequest.DONE) {
+					if (request.status == 200) {
+						let pair = JSON.parse(request.responseText);
+						self.updateData(pair.first, pair.second);
+						self.wrapper.style.display = "block";
+					} else if (request.status == 401) { // UNAUTHORIZED: utente non verificato
+						window.location.href = "login_docente.html";
+						window.sessionStorage.removeItem("docente");
+					} else { // Errore nel server o nella richiesta
+						sendError(request.status, request.responseText);
+					}
+				}
+			});
+		}
+
+		// funzione che riempie il form e la tabelle veri e propri
+		this.updateData = function(verbale, listaEsiti) {
+			self.labels.codice.textContent = verbale.codice;
+			self.labels.dataCreazione.textContent = verbale.dataCreazione;
+			self.labels.oraCreazione.textContent = verbale.oraCreazione;
+			self.labels.corso.textContent = verbale.nomeCorso;
+			self.labels.data.textContent = verbale.dataAppello;
+			listaEsiti.forEach(iscrizione => {
+				let row = document.createElement("tr");
+				let matricolaCell = document.createElement("td");
+				matricolaCell.textContent = iscrizione.first.matricolaStudente;
+				row.appendChild(matricolaCell);
+				let cognomeCell = document.createElement("td");
+				cognomeCell.textContent = iscrizione.second.cognome;
+				row.appendChild(cognomeCell);
+				let nomeCell = document.createElement("td");
+				nomeCell.textContent = iscrizione.second.nome;
+				row.appendChild(nomeCell);
+				let emailCell = document.createElement("td");
+				emailCell.textContent = iscrizione.second.email;
+				row.appendChild(emailCell);
+				let corsoLaureaCell = document.createElement("td");
+				corsoLaureaCell.textContent = iscrizione.second.corsoLaurea;
+				row.appendChild(corsoLaureaCell);
+				let votoCell = document.createElement("td");
+				votoCell.textContent = iscrizione.first.voto;
+				row.appendChild(votoCell);
+				self.tableBody.appendChild(row);
+			});
+		}
+
+		this.reset = function() {
+			self.wrapper.style.display = "none";
+			self.tableBody.innerHTML = "";
+		}
+	}
+
+	// Tabella che contiene tutti i verbali del docente
+	function ListaVerbali(_wrapper, _table, _tableBody) {
+		this.wrapper = _wrapper;
+		this.table = _table;
+		this.tableBody = _tableBody;
+		let self = this;
+
+		// funzione che ottiene i dati dal server e mostra la lista di verbali
+		this.show = function() {
+			makeCall("GET", "../Verbali", null, request => {
+				if (request.readyState == XMLHttpRequest.DONE) {
+					if (request.status == 200) {
+						let listaVerbali = JSON.parse(request.responseText);
+						self.updateData(listaVerbali);
+						self.wrapper.style.display = "block";
+					} else if (request.status == 401) { // UNAUTHORIZED: utente non verificato
+						window.location.href = "login_docente.html";
+						window.sessionStorage.removeItem("docente");
+					} else { // Errore nel server o nella richiesta
+						sendError(request.status, request.responseText);
+					}
+				}
+			});
+		}
+
+		// funzione che crea la tabella vera e propria
+		this.updateData = function(verbali) {
+			verbali.forEach(verbale => {
+				let row = document.createElement("tr");
+				let codiceCell = document.createElement("td");
+				codiceCell.textContent = verbale.codice;
+				row.appendChild(codiceCell);
+				let corsoCell = document.createElement("td");
+				corsoCell.textContent = verbale.nomeCorso;
+				row.appendChild(corsoCell);
+				let dataCell = document.createElement("td");
+				dataCell.textContent = verbale.dataAppello;
+				row.appendChild(dataCell);
+				let dataCreazCell = document.createElement("td");
+				dataCreazCell.textContent = verbale.dataCreazione;
+				row.appendChild(dataCreazCell);
+				let oraCreazCell = document.createElement("td");
+				oraCreazCell.textContent = verbale.oraCreazione;
+				row.appendChild(oraCreazCell);
+				let linkCell = document.createElement("td");
+				let linkImage = document.createElement("img");
+				linkImage.src = "../imgs/goto.png"
+				linkImage.className = "goto-icon";
+				linkCell.setAttribute("codice", verbale.codice);
+				linkImage.addEventListener("click", (evt) => {
+					self.reset();
+					buttonIndietro.evolveVerbale();
+					visualizzaVerbale.show(evt.target.closest("td").getAttribute("codice"));
+				});
+				linkCell.appendChild(linkImage);
+				row.appendChild(linkCell);
+				self.tableBody.appendChild(row);
+			});
+		}
+
+		// funzione che resetta e nasconde il componente
+		this.reset = function() {
+			self.wrapper.style.display = "none";
+			self.tableBody.innerHTML = "";
+		}
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }

@@ -15,14 +15,22 @@ import java.sql.Date;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
 
 import it.polimi.tiw.beans.Iscrizione;
 import it.polimi.tiw.beans.Studente;
 import it.polimi.tiw.daos.IscrizioneDAO;
 import it.polimi.tiw.daos.StudenteDAO;
+import it.polimi.tiw.misc.ComparatoreVoti;
 import it.polimi.tiw.misc.DatabaseInit;
 import it.polimi.tiw.misc.Pair;
 
@@ -112,7 +120,7 @@ public class EsitoEsame extends HttpServlet {
 
 		Gson gson = new GsonBuilder().setDateFormat("dd/MM/yyyy").create();
 		String jsonString;
-		if(profiloString.equals("docente")) {
+		if (profiloString.equals("docente")) {
 			StudenteDAO studenteDAO = new StudenteDAO(connection);
 			try {
 				Studente studente = studenteDAO.getStudenteByMatricola(matricola);
@@ -123,7 +131,7 @@ public class EsitoEsame extends HttpServlet {
 				response.getWriter().println("Errore nel server");
 				return;
 			}
-		}else {
+		} else {
 			jsonString = gson.toJson(iscrizione);
 		}
 		response.setStatus(HttpServletResponse.SC_OK);
@@ -143,6 +151,8 @@ public class EsitoEsame extends HttpServlet {
 	 * @param data_appello : data dell'appello richiesto
 	 * @param matricola    : solo per il docente, permette di selezionare lo
 	 *                     studente di cui modificare il voto
+	 * @param voto         : voto da assegnare allo studente
+	 * @param multi_voto   : json contenete le coppie {@code matricola, voto}
 	 */
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -184,7 +194,7 @@ public class EsitoEsame extends HttpServlet {
 			return;
 		}
 
-		if (azione.equals("rifiuta")) {
+		if (azione.equals("rifiuta") && profiloString.equals("studente")) {
 			IscrizioneDAO iscrizioneDAO = new IscrizioneDAO(connection);
 			Studente studente = (Studente) session.getAttribute("studente");
 			try {
@@ -195,8 +205,71 @@ public class EsitoEsame extends HttpServlet {
 				response.getWriter().println("Errore nel server");
 				return;
 			}
-		} else {
+		} else if (azione.equals("modifica") && profiloString.equals("docente")) {
+			Integer matricola;
+			try {
+				matricola = Integer.parseInt(request.getParameter("matricola"));
+				if (matricola != -1 && (matricola < 100000 || matricola > 999999)) {
+					throw new NumberFormatException();
+				}
+			} catch (NumberFormatException e) {
+				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+				response.getWriter().println("Formato matricola errato");
+				return;
+			}
+			if (matricola != -1) {
+				// Inserimento singolo
+				String voto = request.getParameter("voto");
+				if (!ComparatoreVoti.isValid(voto)) {
+					response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+					response.getWriter().println("Voto non valido");
+					return;
+				}
+				IscrizioneDAO iscrizioneDAO = new IscrizioneDAO(connection);
+				try {
+					iscrizioneDAO.modificaVoto(matricola, nomeCorso, dataAppello, voto);
+				} catch (SQLException e) {
+					response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+					response.getWriter().println("Errore nel server");
+					return;
+				} catch (IllegalArgumentException e) {
+					response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+					response.getWriter().println("Voto non valido");
+					return;
+				}
+			} else {
+				// Inserimento multiplo
+				try {
+					JsonArray array = (JsonArray) JsonParser.parseString(request.getParameter("multi_voto"));
+					System.out.println(array.toString());
+					Map<Integer, String> mappaVoti = new HashMap<Integer, String>();
+					array.forEach(coppia -> {
+						Integer tmpMat = coppia.getAsJsonObject().get("matricola").getAsInt();
+						String tmpVoto = coppia.getAsJsonObject().get("voto").getAsString();
+						if (tmpMat > 100000 && tmpMat < 999999 && ComparatoreVoti.isValid(tmpVoto))
+							mappaVoti.put(tmpMat, tmpVoto);
+						else
+							throw new IllegalArgumentException();
+					});
+					System.out.println(mappaVoti);
+					IscrizioneDAO iscrizioneDAO = new IscrizioneDAO(connection);
+					iscrizioneDAO.modificaMultipliVoti(nomeCorso, dataAppello, mappaVoti);
+				} catch (JsonParseException e) {
+					response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+					response.getWriter().println("Errore nel json multivoto");
+					return;
+				} catch (SQLException e) {
+					response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+					response.getWriter().println("Errore nel server");
+					return;
+				} catch (IllegalArgumentException e) {
+					response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+					response.getWriter().println("Parametri non validi");
+					return;
+				}
 
+			}
+			response.setStatus(HttpServletResponse.SC_OK);
 		}
 	}
 

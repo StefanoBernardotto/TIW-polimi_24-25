@@ -3,10 +3,12 @@ package it.polimi.tiw.daos;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
+import java.sql.PseudoColumnUsage;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -191,6 +193,49 @@ public class IscrizioneDAO {
 			throw new SQLException("Stato di pubblicazione non valido");
 		}
 
+	}
+
+	/**
+	 * Metodo per inserire più voti contemporaneamente a più studenti
+	 * 
+	 * @param nomeCorso   : nome del corso
+	 * @param dataAppello : data dell'appello
+	 * @param mappa       : mappa {@code <matricola, voto>} con i voti da assegnare
+	 *                    a ogni studente
+	 * @throws SQLException
+	 * @throws IllegalArgumentException se un voto non è nella giusta forma
+	 */
+	public void modificaMultipliVoti(String nomeCorso, Date dataAppello, Map<Integer, String> mappa)
+			throws SQLException, IllegalArgumentException {
+		String queryString = "update iscrizioni set stato_pubblicazione = 'inserito', voto = ? where nome_corso = ? and data_appello = ? and matricola_studente = ?";
+		connection.setAutoCommit(false);
+		try {
+			PreparedStatement ps = connection.prepareStatement(queryString);
+			for (Integer matricola : mappa.keySet()) {
+				if (ComparatoreVoti.isValid(mappa.get(matricola))) {
+					ps.setString(1, mappa.get(matricola));
+					ps.setString(2, nomeCorso);
+					ps.setDate(3, dataAppello);
+					ps.setInt(4, matricola);
+					ps.addBatch();
+
+				} else {
+					throw new IllegalArgumentException("Voto non valido");
+				}
+			}
+			int[] res = ps.executeBatch();
+			for (int i = 0; i < res.length; i++) {
+				if(res[i] != 1) {
+					throw new SQLException("Numero di righe modificate errato");
+				}
+			}
+			connection.commit();
+			connection.setAutoCommit(true);
+		} catch (SQLException | IllegalArgumentException e) {
+			connection.rollback();
+			connection.setAutoCommit(true);
+			throw e;
+		}
 	}
 
 	/**

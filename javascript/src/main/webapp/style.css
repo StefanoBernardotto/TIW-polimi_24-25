@@ -116,6 +116,7 @@ table {
 }
 
 .verbali-table {
+	margin: auto;
 	max-height: 350px;
 }
 
@@ -203,6 +204,10 @@ table td a:hover {
 	width: 15px;
 }
 
+.goto-icon:hover {
+	cursor: pointer;
+}
+
 .cestino-icon {
 	height: 80px;
 	width: 80px;
@@ -279,6 +284,8 @@ table td a:hover {
 .verbale-container {
 	display: flex;
 	justify-content: space-between;
+	gap: 10px;
+	margin-bottom: 10 px;
 }
 
 .voto-container {

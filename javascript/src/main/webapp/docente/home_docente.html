@@ -58,7 +58,8 @@
 						</div>
 					</div>
 				</div>
-				<div class="iscritti-container" id="container-iscritti" style="display: none">
+				<div class="iscritti-container" id="container-iscritti"
+					style="display: none">
 					<h4 id="header-iscritti">Iscritti all'appello</h4>
 					<table class="iscritti-table" id="table-iscritti">
 						<thead>
@@ -74,13 +75,14 @@
 							</tr>
 						</thead>
 						<tbody id="table-body-iscritti">
-						
+
 						</tbody>
 					</table>
 					<div class="btn-box" id="button-box">
 						<button class="action-button" id="button-pubblica">Pubblica</button>
 						<button class="action-button" id="button-verbalizza">Verbalizza</button>
-						<button class="action-button" id="button-inserimento-multiplo">Inserimento multiplo</button>
+						<button class="action-button" id="button-inserimento-multiplo">Inserimento
+							multiplo</button>
 					</div>
 				</div>
 			</div>
@@ -118,13 +120,72 @@
 						</div>
 					</div>
 					<div class="voto-container">
-						<label for="voto" style="font-weight: 600;">Seleziona un voto:</label>
-						<select name="voto" id="select-voto">
-							
+						<label for="voto" style="font-weight: 600;">Seleziona un
+							voto:</label> <select id="select-voto">
+
 						</select>
 						<button class="action-button" id="button-salva">Salva</button>
 					</div>
 				</div>
+			</div>
+			<div class="data-container" id="wrapper-verbale"
+				style="display: none">
+				<div class="verbale-container">
+					<div>
+						<span class="data-label">Codice verbale:</span> <span
+							id="v-label-codice"></span>
+					</div>
+					<div>
+						<span class="data-label">Data creazione:</span> <span
+							id="v-label-data-creaz"></span>
+					</div>
+					<div>
+						<span class="data-label">Ora creazione:</span> <span
+							id="v-label-ora-creaz"></span>
+					</div>
+				</div>
+				<div class="appello-container">
+					<div>
+						<span class="data-label">Corso:</span> <span id="v-label-corso"></span>
+					</div>
+					<div>
+						<span class="data-label">Data appello:</span> <span
+							id="v-label-data"></span>
+					</div>
+				</div>
+				<table class="verbale-table" id="table-verbale">
+					<thead>
+						<tr>
+							<td>Matricola</td>
+							<td>Nome</td>
+							<td>Cognome</td>
+							<td>Email</td>
+							<td>Corso di laurea</td>
+							<td>Voto</td>
+						</tr>
+					</thead>
+					<tbody id="table-body-verbale">
+
+					</tbody>
+				</table>
+			</div>
+			<div id="wrapper-verbali" style="display: none">
+				<h3>Verbali</h3>
+				<table class="verbali-table" id="table-verbali">
+					<thead>
+						<tr>
+							<td>Codice verbale</td>
+							<td>Nome corso</td>
+							<td>Data appello</td>
+							<td>Data creazione</td>
+							<td>Ora creazione</td>
+							<td></td>
+						</tr>
+					</thead>
+					<tbody id="table-body-verbali">
+					
+					</tbody>
+				</table>
 			</div>
 		</div>
 	</div>
