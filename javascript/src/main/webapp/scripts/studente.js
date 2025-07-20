@@ -246,7 +246,7 @@
 				}
 			});
 		};
-		
+
 		// costruisce la tabella vera e propria con la lista passata
 		this.updateData = function(listaAppelli) {
 			this.container.style.visibility = "visible";
@@ -368,8 +368,13 @@
 			this.labels.pubblicazione.textContent = iscrizione.statoPubblicazione;
 			if (iscrizione.statoPubblicazione == "pubblicato") {
 				// rifiutabile
-				this.cestino.style.display = "block";
-				this.labelNonRifiutabile.style.display = "none";
+				if (voti.indexOf(iscrizione.voto) > 3) {
+					this.cestino.style.display = "block";
+					this.labelNonRifiutabile.style.display = "none";
+				} else {
+					this.cestino.style.display = "none";
+					this.labelNonRifiutabile.style.display = "none"
+				}
 			} else if (iscrizione.statoPubblicazione == "rifiutato") {
 				// già rifiutato
 				this.cestino.style.display = "none";
@@ -447,7 +452,7 @@
 				}
 			}, false);
 		}
-		
+
 		// funzione che nasconde il popup
 		this.close = function() {
 			this.container.style.display = "none";

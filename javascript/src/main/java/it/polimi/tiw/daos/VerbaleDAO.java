@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.UUID;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import it.polimi.tiw.beans.Verbale;
@@ -71,7 +72,7 @@ public class VerbaleDAO {
 					}
 					return listaVerbali;
 				} else {
-					throw new SQLException("Nessuna riga ottenuta");
+					return Collections.emptyList();
 				}
 			}
 		}

@@ -849,7 +849,14 @@
 				if (request.readyState == XMLHttpRequest.DONE) {
 					if (request.status == 200) {
 						let listaVerbali = JSON.parse(request.responseText);
-						self.updateData(listaVerbali);
+						if (listaVerbali.length == 0) {
+							self.table.style.display = "none";
+							document.getElementById("header-verbali").textContent = "Nessun verbale da visualizzare";
+						} else {
+							self.table.style.display = "block";
+							document.getElementById("header-verbali").textContent = "Verbali";
+							self.updateData(listaVerbali);
+						}
 						self.wrapper.style.display = "block";
 					} else if (request.status == 401) { // UNAUTHORIZED: utente non verificato
 						window.location.href = "login_docente.html";
