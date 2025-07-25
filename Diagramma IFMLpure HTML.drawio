@@ -1,13 +1,13 @@
 <mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/27.0.9 Chrome/134.0.6998.205 Electron/35.4.0 Safari/537.36" version="27.0.9">
   <diagram id="R2lEEEUBdFMjLlhIrx00" name="Page-1">
-    <mxGraphModel dx="1929" dy="1643" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0" extFonts="Permanent Marker^https://fonts.googleapis.com/css?family=Permanent+Marker">
+    <mxGraphModel dx="2515" dy="1975" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0" extFonts="Permanent Marker^https://fonts.googleapis.com/css?family=Permanent+Marker">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
         <mxCell id="GDVbqABVd0ClRPIk_4P2-120" value="&amp;lt;&amp;lt;Form&amp;gt;&amp;gt; Voto" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C2C2C2;" parent="1" vertex="1">
           <mxGeometry x="1861" y="322" width="120" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="GDVbqABVd0ClRPIk_4P2-1" value="AutenticazioneDocente" style="swimlane;whiteSpace=wrap;html=1;startSize=23;" parent="1" vertex="1">
+        <mxCell id="GDVbqABVd0ClRPIk_4P2-1" value="LoginDocente" style="swimlane;whiteSpace=wrap;html=1;startSize=23;" parent="1" vertex="1">
           <mxGeometry x="190" y="60" width="210" height="290" as="geometry">
             <mxRectangle x="270" y="420" width="120" height="30" as="alternateBounds" />
           </mxGeometry>
@@ -550,7 +550,7 @@
         <mxCell id="GDVbqABVd0ClRPIk_4P2-270" value="Rifuta voto" style="shape=hexagon;perimeter=hexagonPerimeter2;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#C2C2C2;" parent="1" vertex="1">
           <mxGeometry x="1890" y="548" width="90" height="40" as="geometry" />
         </mxCell>
-        <mxCell id="Kfvw-jQYzM1CLgg2IkhN-4" value="AutenticazioneStudente" style="swimlane;whiteSpace=wrap;html=1;startSize=23;" parent="1" vertex="1">
+        <mxCell id="Kfvw-jQYzM1CLgg2IkhN-4" value="LoginStudente" style="swimlane;whiteSpace=wrap;html=1;startSize=23;" parent="1" vertex="1">
           <mxGeometry x="190" y="501" width="210" height="190" as="geometry">
             <mxRectangle x="270" y="420" width="120" height="30" as="alternateBounds" />
           </mxGeometry>
