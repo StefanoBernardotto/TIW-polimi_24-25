@@ -54,6 +54,15 @@ Per lo sviluppo del progetto si sono utilizzati:
 - MySQL Workbench e DataGrip
 - Draw.io e Visual Paradigm
 
+## Valutazioni e considerazioni del docente
+**Valutazione**: 27 / 30L.
+
+Il docente ha indicato i seguenti punti critici nella progettazione e nell'implementazione dell'applicazione:
+
+- **Pagina "Scelta profilo"**: superflua, il login deve essere unico sia per docente che per studente, in base alle credenziali il sito reindirizza alla pagina corretta; dovrebbe essere inserito anche il ruolo dell'utente nel database per identificarlo chiaramente
+- **Servlet e URL**: i controllori sono mal progettati, è importante avere un controllore per ogni "azione" che si vuole implementare; il docente ha ritenuto errato l'utilizzo di parole che identificano il comando da eseguire (es "modifica" / "rifiuta"), richiede piuttosto che vengano utilizzati più controllori
+- **Iscrizioni, corsi e appelli**: il docente ha sottolineato che l'uso del nome come identificativo per un corso è errato (si pensi ad un corso diviso in più sezioni con più docenti), così come ha sottolineato la necessità di un codice identificativo per l'iscrizione ad un esame piuttosto che identificare la stessa con un chiave composta da tre campi
+
 ## Autore
 
 - Bernardotto Stefano (<https://github.com/StefanoBernardotto>): studente di Ingegneria Informatica
